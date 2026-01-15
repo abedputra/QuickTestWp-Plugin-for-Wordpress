@@ -1,0 +1,119 @@
+/* QTest Admin Styles */
+
+.qtest-question-item {
+    background-color: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.qtest-question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.qtest-question-header h3 {
+    margin: 0;
+    color: #23282d;
+    font-size: 18px;
+}
+
+.qtest-image-upload {
+    margin-bottom: 10px;
+}
+
+.qtest-image-preview {
+    margin-bottom: 10px;
+}
+
+.qtest-image-preview img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.qtest-upload-image,
+.qtest-remove-image {
+    margin-right: 5px;
+}
+
+.qtest-save-status {
+    font-weight: 600;
+}
+
+/* Make form fields more visible */
+.qtest-question-item .form-table th {
+    width: 200px;
+    font-weight: 600;
+}
+
+.qtest-question-item .form-table td {
+    padding: 15px 10px;
+}
+
+.qtest-question-item input[type="text"],
+.qtest-question-item textarea,
+.qtest-question-item select {
+    width: 100%;
+    max-width: 600px;
+}
+
+.qtest-question-item textarea {
+    min-height: 80px;
+}
+
+/* Add question button styling */
+#qtest-add-question {
+    margin-top: 10px;
+    font-size: 14px;
+    padding: 8px 16px;
+    height: auto;
+}
+
+/* Action buttons with icons */
+.wp-list-table .button.button-small {
+    padding: 6px 8px;
+    height: 28px;
+    min-height: 28px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    box-sizing: border-box;
+}
+
+.wp-list-table .button.button-small .dashicons {
+    margin: 0;
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+    line-height: 1;
+    display: inline-block;
+    vertical-align: middle;
+    position: relative;
+    top: 0;
+}
+
+.wp-list-table .button.button-small:hover {
+    opacity: 0.8;
+}
+
+.wp-list-table .button.button-small:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.wp-list-table .button.button-small[style*="color: #a00"]:hover {
+    background-color: #dc3232;
+    color: #fff !important;
+    border-color: #dc3232;
+}

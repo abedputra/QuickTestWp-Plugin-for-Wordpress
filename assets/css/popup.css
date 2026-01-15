@@ -1,0 +1,151 @@
+/* QTest Popup Styles */
+
+.qtest-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.qtest-popup-overlay.qtest-popup-show {
+    opacity: 1;
+}
+
+.qtest-popup-container {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    max-width: 450px;
+    width: 90%;
+    transform: scale(0.9) translateY(-20px);
+    transition: transform 0.3s ease;
+    overflow: hidden;
+}
+
+.qtest-popup-overlay.qtest-popup-show .qtest-popup-container {
+    transform: scale(1) translateY(0);
+}
+
+.qtest-popup-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    color: #fff;
+    margin: 20px auto 15px;
+    font-weight: bold;
+}
+
+.qtest-popup-content {
+    padding: 0 30px 20px;
+    text-align: center;
+}
+
+.qtest-popup-title {
+    margin: 0 0 15px 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: #333;
+}
+
+.qtest-popup-message {
+    margin: 0;
+    font-size: 16px;
+    color: #666;
+    line-height: 1.6;
+}
+
+.qtest-popup-buttons {
+    display: flex;
+    gap: 10px;
+    padding: 20px 30px;
+    border-top: 1px solid #e0e0e0;
+    justify-content: flex-end;
+}
+
+.qtest-popup-btn {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #fff;
+    min-width: 80px;
+}
+
+.qtest-popup-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.qtest-popup-btn:active {
+    transform: translateY(0);
+}
+
+.qtest-popup-cancel {
+    background-color: #757575;
+}
+
+.qtest-popup-cancel:hover {
+    background-color: #616161;
+}
+
+.qtest-popup-confirm,
+.qtest-popup-ok {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Type-specific styles */
+.qtest-popup-success .qtest-popup-icon {
+    background-color: #4caf50;
+}
+
+.qtest-popup-error .qtest-popup-icon {
+    background-color: #f44336;
+}
+
+.qtest-popup-info .qtest-popup-icon {
+    background-color: #2196F3;
+}
+
+.qtest-popup-warning .qtest-popup-icon {
+    background-color: #ff9800;
+}
+
+.qtest-popup-confirm .qtest-popup-icon {
+    background-color: #2196F3;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .qtest-popup-container {
+        width: 95%;
+        margin: 20px;
+    }
+    
+    .qtest-popup-content {
+        padding: 0 20px 15px;
+    }
+    
+    .qtest-popup-buttons {
+        padding: 15px 20px;
+        flex-direction: column;
+    }
+    
+    .qtest-popup-btn {
+        width: 100%;
+    }
+}
