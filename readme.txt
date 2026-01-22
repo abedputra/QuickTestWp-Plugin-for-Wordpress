@@ -1,4 +1,4 @@
-=== QTest ===
+=== QuickTestWP ===
 Contributors: abedputra
 Tags: quiz, test, assessment, exam, questions
 Requires at least: 5.0
@@ -12,7 +12,7 @@ A comprehensive WordPress quiz and test plugin with image upload support, progre
 
 == Description ==
 
-QTest is a powerful WordPress plugin for creating interactive quizzes, assessments, and exams on your WordPress site. Perfect for educators, trainers, and anyone who needs to create engaging tests with multiple question types.
+QuickTestWP is a powerful WordPress plugin for creating interactive quizzes, assessments, and exams on your WordPress site. Perfect for educators, trainers, and anyone who needs to create engaging tests with multiple question types.
 
 = Features =
 
@@ -30,16 +30,16 @@ QTest is a powerful WordPress plugin for creating interactive quizzes, assessmen
 
 = Usage =
 
-1. Create a new test from **QTest** → **Add New**
+1. Create a new test from **QuickTestWP** → **Add New**
 2. Add questions with images, multiple choice options, or short answers
 3. Set time limits and access restrictions
-4. Insert the test into any post or page using the shortcode: `[qtest id="1"]`
+4. Insert the test into any post or page using the shortcode: `[quicktestwp id="1"]`
 5. Users can take the test and receive results via email
 
 = Shortcodes =
 
-* `[qtest id="1"]` - Display a single test
-* `[qtest_sequence id="1"]` - Display a sequence of tests
+* `[quicktestwp id="1"]` - Display a single test
+* `[quicktestwp_sequence id="1"]` - Display a sequence of tests
 
 = Question Types =
 
@@ -51,29 +51,29 @@ QTest is a powerful WordPress plugin for creating interactive quizzes, assessmen
 
 1. Upload the `qtest` folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to **QTest** in the admin menu to start creating tests
+3. Go to **QuickTestWP** in the admin menu to start creating tests
 
 == Frequently Asked Questions ==
 
 = How do I create a test? =
 
-Go to **QTest** → **Add New**, enter your test details, and add questions.
+Go to **QuickTestWP** → **Add New**, enter your test details, and add questions.
 
 = Can I import questions from a CSV file? =
 
-Yes! Go to **QTest** → **Import Questions** and upload a CSV file. Download the sample CSV template to see the required format.
+Yes! Go to **QuickTestWP** → **Import Questions** and upload a CSV file. Download the sample CSV template to see the required format.
 
 = How do I display a test on my site? =
 
-Use the shortcode `[qtest id="1"]` (replace 1 with your test ID) in any post or page. You can also use the "Insert QTest" meta box when editing posts.
+Use the shortcode `[quicktestwp id="1"]` (replace 1 with your test ID) in any post or page. You can also use the "Insert QuickTestWP" meta box when editing posts.
 
 = Can I create a sequence of multiple tests? =
 
-Yes! Create a test sequence from **QTest** → **Add New Sequence** and add multiple tests. Users will take them one after another.
+Yes! Create a test sequence from **QuickTestWP** → **Add New Sequence** and add multiple tests. Users will take them one after another.
 
 = How are results stored? =
 
-Results are stored in the database and can be viewed from **QTest** → **Results**. You can also resend result emails from there.
+Results are stored in the database and can be viewed from **QuickTestWP** → **Results**. You can also resend result emails from there.
 
 = Can I restrict tests to specific user roles? =
 
@@ -104,4 +104,4 @@ Yes! When creating or editing a test, you can select which user roles are allowe
 == Upgrade Notice ==
 
 = 1.0.0 =
-Initial release of QTest plugin.
+Initial release of QuickTestWP plugin.

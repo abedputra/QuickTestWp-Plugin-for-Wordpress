@@ -1,13 +1,13 @@
 <?php
 /**
- * Database operations for QTest
+ * Database operations for QuickTestWP
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-class QTest_Database {
+class QuickTestWP_Database {
     
     /**
      * Helper function to add column if it doesn't exist
@@ -64,7 +64,7 @@ class QTest_Database {
         $charset_collate = $wpdb->get_charset_collate();
         
         // Tests table
-        $table_tests = $wpdb->prefix . 'qtest_tests';
+        $table_tests = $wpdb->prefix . 'quicktestwp_tests';
         $sql_tests = "CREATE TABLE IF NOT EXISTS $table_tests (
             id bigint(20) NOT NULL AUTO_INCREMENT,
             title varchar(255) NOT NULL,
@@ -79,7 +79,7 @@ class QTest_Database {
         self::add_column_if_not_exists($table_tests, 'time_limit', "int(11) DEFAULT 0", 'description');
         
         // Questions table
-        $table_questions = $wpdb->prefix . 'qtest_questions';
+        $table_questions = $wpdb->prefix . 'quicktestwp_questions';
         $sql_questions = "CREATE TABLE IF NOT EXISTS $table_questions (
             id bigint(20) NOT NULL AUTO_INCREMENT,
             test_id bigint(20) NOT NULL,
@@ -97,7 +97,7 @@ class QTest_Database {
         ) $charset_collate;";
         
         // Results table
-        $table_results = $wpdb->prefix . 'qtest_results';
+        $table_results = $wpdb->prefix . 'quicktestwp_results';
         $sql_results = "CREATE TABLE IF NOT EXISTS $table_results (
             id bigint(20) NOT NULL AUTO_INCREMENT,
             test_id bigint(20) NOT NULL,
@@ -123,7 +123,7 @@ class QTest_Database {
         self::add_column_if_not_exists($table_results, 'question_times', 'text', 'time_taken');
         
         // Sequences table (for test bundles)
-        $table_sequences = $wpdb->prefix . 'qtest_sequences';
+        $table_sequences = $wpdb->prefix . 'quicktestwp_sequences';
         $sql_sequences = "CREATE TABLE IF NOT EXISTS $table_sequences (
             id bigint(20) NOT NULL AUTO_INCREMENT,
             title varchar(255) NOT NULL,
@@ -134,7 +134,7 @@ class QTest_Database {
         ) $charset_collate;";
         
         // Sequence tests table (tests in a sequence)
-        $table_sequence_tests = $wpdb->prefix . 'qtest_sequence_tests';
+        $table_sequence_tests = $wpdb->prefix . 'quicktestwp_sequence_tests';
         $sql_sequence_tests = "CREATE TABLE IF NOT EXISTS $table_sequence_tests (
             id bigint(20) NOT NULL AUTO_INCREMENT,
             sequence_id bigint(20) NOT NULL,
@@ -160,7 +160,7 @@ class QTest_Database {
      */
     public static function get_tests() {
         global $wpdb;
-        $table = $wpdb->prefix . 'qtest_tests';
+        $table = $wpdb->prefix . 'quicktestwp_tests';
         return $wpdb->get_results("SELECT * FROM $table ORDER BY created_at DESC");
     }
     
@@ -169,7 +169,7 @@ class QTest_Database {
      */
     public static function get_test($test_id) {
         global $wpdb;
-        $table = $wpdb->prefix . 'qtest_tests';
+        $table = $wpdb->prefix . 'quicktestwp_tests';
         return $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE id = %d", $test_id));
     }
     
@@ -178,7 +178,7 @@ class QTest_Database {
      */
     public static function get_questions($test_id) {
         global $wpdb;
-        $table = $wpdb->prefix . 'qtest_questions';
+        $table = $wpdb->prefix . 'quicktestwp_questions';
         return $wpdb->get_results($wpdb->prepare(
             "SELECT * FROM $table WHERE test_id = %d ORDER BY question_order ASC, id ASC",
             $test_id
@@ -190,7 +190,7 @@ class QTest_Database {
      */
     public static function save_result($data) {
         global $wpdb;
-        $table = $wpdb->prefix . 'qtest_results';
+        $table = $wpdb->prefix . 'quicktestwp_results';
         
         $insert_data = array(
             'test_id' => $data['test_id'],
@@ -230,7 +230,7 @@ class QTest_Database {
      */
     public static function get_average_times_per_question($test_id) {
         global $wpdb;
-        $table = $wpdb->prefix . 'qtest_results';
+        $table = $wpdb->prefix . 'quicktestwp_results';
         
         // Get all results for this test that have question_times
         $results = $wpdb->get_results($wpdb->prepare(
@@ -280,9 +280,9 @@ class QTest_Database {
     public static function upgrade_database() {
         global $wpdb;
         
-        $table_tests = $wpdb->prefix . 'qtest_tests';
-        $table_questions = $wpdb->prefix . 'qtest_questions';
-        $table_results = $wpdb->prefix . 'qtest_results';
+        $table_tests = $wpdb->prefix . 'quicktestwp_tests';
+        $table_questions = $wpdb->prefix . 'quicktestwp_questions';
+        $table_results = $wpdb->prefix . 'quicktestwp_results';
         
         // Check if tables exist first
         $tests_table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_tests'") === $table_tests;
@@ -324,8 +324,8 @@ class QTest_Database {
         }
         
         // Create sequences tables if they don't exist
-        $table_sequences = $wpdb->prefix . 'qtest_sequences';
-        $table_sequence_tests = $wpdb->prefix . 'qtest_sequence_tests';
+        $table_sequences = $wpdb->prefix . 'quicktestwp_sequences';
+        $table_sequence_tests = $wpdb->prefix . 'quicktestwp_sequence_tests';
         $sequences_table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_sequences'") === $table_sequences;
         $sequence_tests_table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_sequence_tests'") === $table_sequence_tests;
         
@@ -340,7 +340,7 @@ class QTest_Database {
      */
     public static function get_result($email, $test_id) {
         global $wpdb;
-        $table = $wpdb->prefix . 'qtest_results';
+        $table = $wpdb->prefix . 'quicktestwp_results';
         return $wpdb->get_row($wpdb->prepare(
             "SELECT * FROM $table WHERE email = %s AND test_id = %d ORDER BY completed_at DESC LIMIT 1",
             $email,
@@ -353,7 +353,7 @@ class QTest_Database {
      */
     public static function get_all_results($test_id = null) {
         global $wpdb;
-        $table = $wpdb->prefix . 'qtest_results';
+        $table = $wpdb->prefix . 'quicktestwp_results';
         
         if ($test_id) {
             return $wpdb->get_results($wpdb->prepare(
@@ -370,7 +370,7 @@ class QTest_Database {
      */
     public static function get_result_by_id($result_id) {
         global $wpdb;
-        $table = $wpdb->prefix . 'qtest_results';
+        $table = $wpdb->prefix . 'quicktestwp_results';
         return $wpdb->get_row($wpdb->prepare(
             "SELECT * FROM $table WHERE id = %d",
             $result_id
@@ -382,7 +382,7 @@ class QTest_Database {
      */
     public static function get_sequences() {
         global $wpdb;
-        $table = $wpdb->prefix . 'qtest_sequences';
+        $table = $wpdb->prefix . 'quicktestwp_sequences';
         return $wpdb->get_results("SELECT * FROM $table ORDER BY created_at DESC");
     }
     
@@ -391,7 +391,7 @@ class QTest_Database {
      */
     public static function get_sequence($sequence_id) {
         global $wpdb;
-        $table = $wpdb->prefix . 'qtest_sequences';
+        $table = $wpdb->prefix . 'quicktestwp_sequences';
         return $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE id = %d", $sequence_id));
     }
     
@@ -400,7 +400,7 @@ class QTest_Database {
      */
     public static function get_sequence_tests($sequence_id) {
         global $wpdb;
-        $table = $wpdb->prefix . 'qtest_sequence_tests';
+        $table = $wpdb->prefix . 'quicktestwp_sequence_tests';
         return $wpdb->get_results($wpdb->prepare(
             "SELECT * FROM $table WHERE sequence_id = %d ORDER BY test_order ASC",
             $sequence_id
@@ -412,7 +412,7 @@ class QTest_Database {
      */
     public static function get_first_test_in_sequence($sequence_id) {
         global $wpdb;
-        $table = $wpdb->prefix . 'qtest_sequence_tests';
+        $table = $wpdb->prefix . 'quicktestwp_sequence_tests';
         return $wpdb->get_row($wpdb->prepare(
             "SELECT * FROM $table WHERE sequence_id = %d ORDER BY test_order ASC LIMIT 1",
             $sequence_id
@@ -424,7 +424,7 @@ class QTest_Database {
      */
     public static function get_next_test_in_sequence($sequence_id, $current_test_id) {
         global $wpdb;
-        $table = $wpdb->prefix . 'qtest_sequence_tests';
+        $table = $wpdb->prefix . 'quicktestwp_sequence_tests';
         
         // Get current test order
         $current = $wpdb->get_row($wpdb->prepare(

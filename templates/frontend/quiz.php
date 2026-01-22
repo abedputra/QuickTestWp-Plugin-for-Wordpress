@@ -112,7 +112,7 @@ if (!defined('ABSPATH')) {
         <p id="qtest-completion-message">Please provide your information to receive your results:</p>
         <form id="qtest-result-form">
             <input type="hidden" id="qtest_test_id" value="<?php echo esc_attr($test->id); ?>">
-            <input type="hidden" id="qtest_nonce" value="<?php echo esc_attr(wp_create_nonce('qtest_nonce')); ?>">
+            <input type="hidden" id="quicktestwp_nonce" value="<?php echo esc_attr(wp_create_nonce('quicktestwp_nonce')); ?>">
             <input type="hidden" id="qtest_answers" name="answers">
             <input type="hidden" id="qtest_time_started" name="time_started">
             <input type="hidden" id="qtest_time_completed" name="time_completed">

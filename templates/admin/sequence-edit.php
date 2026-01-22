@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
     
     <form id="qtest-sequence-form">
         <input type="hidden" id="sequence_id" name="sequence_id" value="<?php echo $sequence ? esc_attr($sequence->id) : 0; ?>">
-        <input type="hidden" id="qtest_nonce" value="<?php echo esc_attr(wp_create_nonce('qtest_nonce')); ?>">
+        <input type="hidden" id="quicktestwp_nonce" value="<?php echo esc_attr(wp_create_nonce('quicktestwp_nonce')); ?>">
         
         <table class="form-table">
             <tr>
@@ -23,7 +23,7 @@ if (!defined('ABSPATH')) {
         
         <p class="submit">
             <button type="submit" class="button button-primary"><?php echo $sequence ? 'Update Sequence' : 'Save Sequence'; ?></button>
-            <a href="<?php echo esc_url(admin_url('admin.php?page=qtest-sequences')); ?>" class="button">Cancel</a>
+            <a href="<?php echo esc_url(admin_url('admin.php?page=quicktestwp-sequences')); ?>" class="button">Cancel</a>
         </p>
     </form>
 
@@ -35,7 +35,7 @@ if (!defined('ABSPATH')) {
     <div id="qtest-sequence-tests-list">
         <?php if (!empty($sequence_tests)): ?>
             <?php foreach ($sequence_tests as $seq_test): 
-                $test = QTest_Database::get_test($seq_test->test_id);
+                $test = QuickTestWP_Database::get_test($seq_test->test_id);
             ?>
                 <div class="qtest-sequence-test-item" data-sequence-test-id="<?php echo esc_attr($seq_test->id); ?>" style="background: #fff; border: 1px solid #ccd0d4; border-radius: 4px; padding: 15px; margin-bottom: 10px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -88,7 +88,7 @@ if (!defined('ABSPATH')) {
             </tr>
         </table>
         <p>
-            <button type="button" id="qtest-add-sequence-test" class="button button-primary">Add Test to Sequence</button>
+            <button type="button" id="quicktestwp-add-sequence-test" class="button button-primary">Add Test to Sequence</button>
         </p>
     </div>
 <?php else: ?>

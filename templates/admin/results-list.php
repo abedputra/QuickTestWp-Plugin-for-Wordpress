@@ -7,8 +7,8 @@ if (!defined('ABSPATH')) {
 $selected_test_id = isset($_GET['test_id']) ? intval($_GET['test_id']) : null;
 ?>
 <div class="wrap">
-    <input type="hidden" id="qtest_nonce" value="<?php echo esc_attr(wp_create_nonce('qtest_nonce')); ?>">
-    <h1 class="wp-heading-inline">QTest - Test Results</h1>
+    <input type="hidden" id="quicktestwp_nonce" value="<?php echo esc_attr(wp_create_nonce('quicktestwp_nonce')); ?>">
+    <h1 class="wp-heading-inline">QuickTestWP - Test Results</h1>
     
     <hr class="wp-header-end">
     
@@ -28,7 +28,7 @@ $selected_test_id = isset($_GET['test_id']) ? intval($_GET['test_id']) : null;
             </label>
             <input type="submit" class="button" value="Filter" style="margin-left: 10px;">
             <?php if ($selected_test_id): ?>
-                <a href="<?php echo esc_url(admin_url('admin.php?page=qtest-results')); ?>" class="button">Clear Filter</a>
+                <a href="<?php echo esc_url(admin_url('admin.php?page=quicktestwp-results')); ?>" class="button">Clear Filter</a>
             <?php endif; ?>
         </form>
     </div>
@@ -53,7 +53,7 @@ $selected_test_id = isset($_GET['test_id']) ? intval($_GET['test_id']) : null;
                 </tr>
             <?php else: ?>
                 <?php foreach ($results as $result): 
-                    $test = QTest_Database::get_test($result->test_id);
+                    $test = QuickTestWP_Database::get_test($result->test_id);
                     $percentage = $result->total_questions > 0 ? round(($result->score / $result->total_questions) * 100, 2) : 0;
                     $time_taken_minutes = $result->time_taken > 0 ? round($result->time_taken / 60, 2) : 0;
                 ?>
@@ -63,7 +63,7 @@ $selected_test_id = isset($_GET['test_id']) ? intval($_GET['test_id']) : null;
                         <td><?php echo esc_html($result->email); ?></td>
                         <td>
                             <?php if ($test): ?>
-                                <a href="<?php echo esc_url(admin_url('admin.php?page=qtest-new&test_id=' . $test->id)); ?>">
+                                <a href="<?php echo esc_url(admin_url('admin.php?page=quicktestwp-new&test_id=' . $test->id)); ?>">
                                     <?php echo esc_html($test->title); ?>
                                 </a>
                             <?php else: ?>

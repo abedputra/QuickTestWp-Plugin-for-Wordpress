@@ -1,28 +1,28 @@
 jQuery(document).ready(function ($) {
     'use strict';
 
-    // Quiz functionality (only if qtestData is defined)
-    if (typeof qtestData !== 'undefined') {
+    // Quiz functionality (only if quicktestwpData is defined)
+    if (typeof quicktestwpData !== 'undefined') {
         let currentQuestion = 0;
         let answers = {};
-        const totalQuestions = qtestData.totalQuestions;
-        let timeRemaining = qtestData.timeLimitSeconds || 0;
+        const totalQuestions = quicktestwpData.totalQuestions;
+        let timeRemaining = quicktestwpData.timeLimitSeconds || 0;
         let timerInterval = null;
         let timeStarted = null;
         let questionStartTimes = {}; // Track when user starts each question
         let questionTimes = {}; // Track time spent on each question
         let averageTimes = {}; // Store average times from server
         let questionTimeIntervals = {}; // Track intervals for each question
-        let qtestUiStage = 'quiz'; // quiz | review | completion | result
+        let quicktestwpUiStage = 'quiz'; // quiz | review | completion | result
 
         // Load average times from server
         $.ajax({
-            url: qtestAjax.ajaxurl,
+            url: quicktestwpAjax.ajaxurl,
             type: 'POST',
             data: {
-                action: 'qtest_get_average_times',
-                nonce: qtestAjax.nonce,
-                test_id: qtestData.testId
+                action: 'quicktestwp_get_average_times',
+                nonce: quicktestwpAjax.nonce,
+                test_id: quicktestwpData.testId
             },
             success: function (response) {
                 if (response.success && response.data.averages) {
@@ -32,9 +32,9 @@ jQuery(document).ready(function ($) {
         });
 
         // Initialize timer if time limit is set
-        if (qtestData.timeLimit > 0 && timeRemaining > 0) {
+        if (quicktestwpData.timeLimit > 0 && timeRemaining > 0) {
             timeStarted = new Date().toISOString();
-            $('#qtest_time_started').val(timeStarted);
+            $('#quicktestwp_time_started').val(timeStarted);
             startTimer();
         }
 
@@ -46,7 +46,7 @@ jQuery(document).ready(function ($) {
         initLazyLoading();
 
         // Track start time for first question
-        const firstQuestionPage = $('.qtest-question-page.active');
+        const firstQuestionPage = $('.quicktestwp-question-page.active');
         const firstQuestionId = firstQuestionPage.data('question-id');
         if (firstQuestionId) {
             trackQuestionStart(firstQuestionId);
@@ -64,8 +64,8 @@ jQuery(document).ready(function ($) {
                             if (dataSrc) {
                                 img.src = dataSrc;
                                 img.removeAttribute('data-src');
-                                img.classList.remove('qtest-lazy-image');
-                                img.classList.add('qtest-loaded-image');
+                                img.classList.remove('quicktestwp-lazy-image');
+                                img.classList.add('quicktestwp-loaded-image');
                                 observer.unobserve(img);
                             }
                         }
@@ -75,19 +75,19 @@ jQuery(document).ready(function ($) {
                 });
 
                 // Observe all lazy images
-                document.querySelectorAll('.qtest-lazy-image').forEach(function (img) {
+                document.querySelectorAll('.quicktestwp-lazy-image').forEach(function (img) {
                     imageObserver.observe(img);
                 });
             } else {
                 // Fallback for browsers that don't support Intersection Observer
                 // Load all images immediately
-                document.querySelectorAll('.qtest-lazy-image').forEach(function (img) {
+                document.querySelectorAll('.quicktestwp-lazy-image').forEach(function (img) {
                     const dataSrc = img.getAttribute('data-src');
                     if (dataSrc) {
                         img.src = dataSrc;
                         img.removeAttribute('data-src');
-                        img.classList.remove('qtest-lazy-image');
-                        img.classList.add('qtest-loaded-image');
+                        img.classList.remove('quicktestwp-lazy-image');
+                        img.classList.add('quicktestwp-loaded-image');
                     }
                 });
             }
@@ -95,20 +95,20 @@ jQuery(document).ready(function ($) {
 
         // Initialize security (anti-cheat) - delay to ensure DOM is ready
         setTimeout(function () {
-            if (typeof QTestSecurity !== 'undefined' && $('.qtest-question-page.active').length > 0) {
+            if (typeof QTestSecurity !== 'undefined' && $('.quicktestwp-question-page.active').length > 0) {
                 QTestSecurity.initSecurity();
-                $(document).trigger('qtest:testStarted');
+                $(document).trigger('quicktestwp:testStarted');
             }
         }, 300);
 
         // Handle force submit from security (tab switching too many times)
-        $(document).on('qtest:forceSubmit', function () {
+        $(document).on('quicktestwp:forceSubmit', function () {
             // For sequences with next test, auto-submit instead of showing form
             // Also check that next_test.test_id is different from current test_id to prevent loops
-            const currentTestId = parseInt($('#qtest_test_id').val(), 10);
-            const nextTestId = qtestData.sequenceInfo && qtestData.sequenceInfo.next_test ? parseInt(qtestData.sequenceInfo.next_test.test_id, 10) : null;
+            const currentTestId = parseInt($('#quicktestwp_test_id').val(), 10);
+            const nextTestId = quicktestwpData.sequenceInfo && quicktestwpData.sequenceInfo.next_test ? parseInt(quicktestwpData.sequenceInfo.next_test.test_id, 10) : null;
             
-            if (qtestData.sequenceInfo && qtestData.sequenceInfo.next_test && nextTestId && nextTestId !== currentTestId && nextTestId > 0) {
+            if (quicktestwpData.sequenceInfo && quicktestwpData.sequenceInfo.next_test && nextTestId && nextTestId !== currentTestId && nextTestId > 0) {
                 submitTest();
                 return;
             }
@@ -117,10 +117,10 @@ jQuery(document).ready(function ($) {
             if (typeof showCompletionForm === 'function') {
                 showCompletionForm();
             } else {
-                $('.qtest-quiz-wrapper').hide();
-                $('#qtest-completion-form').show();
-                $('#qtest_answers').val(JSON.stringify(answers));
-                $('#qtest-completion-message').html('<strong style="color: #d93025;">⚠️ Warning:</strong> You switched tabs/windows too many times. Please provide your information to submit your test:');
+                $('.quicktestwp-quiz-wrapper').hide();
+                $('#quicktestwp-completion-form').show();
+                $('#quicktestwp_answers').val(JSON.stringify(answers));
+                $('#quicktestwp-completion-message').html('<strong style="color: #d93025;">⚠️ Warning:</strong> You switched tabs/windows too many times. Please provide your information to submit your test:');
             }
         });
 
@@ -137,7 +137,7 @@ jQuery(document).ready(function ($) {
                 questionTimes[questionId] = timeSpent;
 
                 // Compare with average if available
-                if (qtestUiStage === 'quiz' && averageTimes[questionId] && timeSpent < averageTimes[questionId]) {
+                if (quicktestwpUiStage === 'quiz' && averageTimes[questionId] && timeSpent < averageTimes[questionId]) {
                     // Calculate faster by with 2 decimal precision
                     const fasterBy = parseFloat((averageTimes[questionId] - timeSpent).toFixed(2));
                     showSpeedMessage(fasterBy, averageTimes[questionId], timeSpent);
@@ -171,11 +171,11 @@ jQuery(document).ready(function ($) {
             message += 'You were ' + fasterByFormatted + ' second' + (fasterByFormatted > 1 ? 's' : '') + ' faster!';
 
             // Show as a nice popup (you can customize this)
-            const popup = $('<div class="qtest-speed-popup">' +
-                '<div class="qtest-speed-popup-content">' +
+            const popup = $('<div class="quicktestwp-speed-popup">' +
+                '<div class="quicktestwp-speed-popup-content">' +
                 '<h3>⚡ Great Speed!</h3>' +
                 '<p>' + message.replace(/\n/g, '<br>') + '</p>' +
-                '<button class="qtest-popup-close">OK</button>' +
+                '<button class="quicktestwp-popup-close">OK</button>' +
                 '</div>' +
                 '</div>');
 
@@ -185,7 +185,7 @@ jQuery(document).ready(function ($) {
                 popup.addClass('show');
             }, 100);
 
-            popup.find('.qtest-popup-close, .qtest-speed-popup').on('click', function (e) {
+            popup.find('.quicktestwp-popup-close, .quicktestwp-speed-popup').on('click', function (e) {
                 if (e.target === this) {
                     popup.removeClass('show');
                     setTimeout(function () {
@@ -196,8 +196,8 @@ jQuery(document).ready(function ($) {
         }
 
         // Answer selection for multiple choice and true/false
-        $(document).on('click', '.qtest-answer-option', function () {
-            const questionPage = $(this).closest('.qtest-question-page');
+        $(document).on('click', '.quicktestwp-answer-option', function () {
+            const questionPage = $(this).closest('.quicktestwp-question-page');
             const questionId = questionPage.data('question-id');
             const option = $(this).data('option');
 
@@ -205,7 +205,7 @@ jQuery(document).ready(function ($) {
             trackQuestionEnd(questionId);
 
             // Remove selected class from all options in this question
-            questionPage.find('.qtest-answer-option').removeClass('selected');
+            questionPage.find('.quicktestwp-answer-option').removeClass('selected');
 
             // Add selected class to clicked option
             $(this).addClass('selected');
@@ -214,26 +214,26 @@ jQuery(document).ready(function ($) {
             answers[questionId] = option;
 
             // Enable next button
-            $('#qtest-next-btn').prop('disabled', false);
+            $('#quicktestwp-next-btn').prop('disabled', false);
         });
 
         // Handle short answer input
-        $(document).on('input', '.qtest-short-answer-input', function () {
-            const questionPage = $(this).closest('.qtest-question-page');
+        $(document).on('input', '.quicktestwp-short-answer-input', function () {
+            const questionPage = $(this).closest('.quicktestwp-question-page');
             const questionId = questionPage.data('question-id');
             const answer = $(this).val().trim();
 
             if (answer) {
                 answers[questionId] = answer;
-                $('#qtest-next-btn').prop('disabled', false);
+                $('#quicktestwp-next-btn').prop('disabled', false);
             } else {
                 delete answers[questionId];
-                $('#qtest-next-btn').prop('disabled', true);
+                $('#quicktestwp-next-btn').prop('disabled', true);
             }
         });
 
         // Back button
-        $('#qtest-back-btn').on('click', function () {
+        $('#quicktestwp-back-btn').on('click', function () {
             if (currentQuestion > 0) {
                 currentQuestion--;
                 showQuestion(currentQuestion);
@@ -243,8 +243,8 @@ jQuery(document).ready(function ($) {
         });
 
         // Next button
-        $('#qtest-next-btn').on('click', function () {
-            const questionPage = $('.qtest-question-page.active');
+        $('#quicktestwp-next-btn').on('click', function () {
+            const questionPage = $('.quicktestwp-question-page.active');
             const questionId = questionPage.data('question-id');
 
             // Check if answer is selected
@@ -267,27 +267,27 @@ jQuery(document).ready(function ($) {
 
         // Submit button
         // Review button
-        $('#qtest-review-btn').on('click', function () {
+        $('#quicktestwp-review-btn').on('click', function () {
             showReviewPage();
         });
 
         // Back to questions from review
-        $('#qtest-back-to-questions-btn').on('click', function () {
-            $('.qtest-quiz-wrapper').show();
-            $('#qtest-review-section').hide();
+        $('#quicktestwp-back-to-questions-btn').on('click', function () {
+            $('.quicktestwp-quiz-wrapper').show();
+            $('#quicktestwp-review-section').hide();
         });
 
         // Final submit from review
-        $('#qtest-final-submit-btn').on('click', function () {
+        $('#quicktestwp-final-submit-btn').on('click', function () {
             submitTest();
         });
 
         // Show review page
         function showReviewPage() {
-            const reviewList = $('#qtest-review-list');
+            const reviewList = $('#quicktestwp-review-list');
             reviewList.empty();
 
-            qtestData.questions.forEach(function (question, index) {
+            quicktestwpData.questions.forEach(function (question, index) {
                 const questionId = question.id;
                 const userAnswer = answers[questionId] || 'Not answered';
                 const questionType = question.question_type || 'multiple_choice';
@@ -303,16 +303,16 @@ jQuery(document).ready(function ($) {
                     answerDisplay = optionMap[userAnswer] || userAnswer;
                 }
 
-                const reviewItem = $('<div class="qtest-review-item" data-question-index="' + index + '">' +
-                    '<div class="qtest-review-question-number">Question ' + (index + 1) + '</div>' +
-                    '<div class="qtest-review-question-text">' + question.question_text + '</div>' +
-                    '<div class="qtest-review-answer">Your Answer: <strong>' + answerDisplay + '</strong></div>' +
+                const reviewItem = $('<div class="quicktestwp-review-item" data-question-index="' + index + '">' +
+                    '<div class="quicktestwp-review-question-number">Question ' + (index + 1) + '</div>' +
+                    '<div class="quicktestwp-review-question-text">' + question.question_text + '</div>' +
+                    '<div class="quicktestwp-review-answer">Your Answer: <strong>' + answerDisplay + '</strong></div>' +
                     '</div>');
 
                 reviewItem.on('click', function () {
                     const questionIndex = $(this).data('question-index');
-                    $('.qtest-quiz-wrapper').show();
-                    $('#qtest-review-section').hide();
+                    $('.quicktestwp-quiz-wrapper').show();
+                    $('#quicktestwp-review-section').hide();
                     currentQuestion = questionIndex;
                     showQuestion(questionIndex);
                 });
@@ -320,9 +320,9 @@ jQuery(document).ready(function ($) {
                 reviewList.append(reviewItem);
             });
 
-            $('.qtest-quiz-wrapper').hide();
-            $('#qtest-review-section').show();
-            qtestUiStage = 'review';
+            $('.quicktestwp-quiz-wrapper').hide();
+            $('#quicktestwp-review-section').show();
+            quicktestwpUiStage = 'review';
         }
 
         // Submit test function
@@ -334,23 +334,23 @@ jQuery(document).ready(function ($) {
 
             // For sequences: if there's a next test, auto-submit without showing user info form
             // Also check that next_test.test_id is different from current test_id to prevent loops
-            const currentTestId = parseInt($('#qtest_test_id').val(), 10);
-            const nextTestId = qtestData.sequenceInfo && qtestData.sequenceInfo.next_test ? parseInt(qtestData.sequenceInfo.next_test.test_id, 10) : null;
+            const currentTestId = parseInt($('#quicktestwp_test_id').val(), 10);
+            const nextTestId = quicktestwpData.sequenceInfo && quicktestwpData.sequenceInfo.next_test ? parseInt(quicktestwpData.sequenceInfo.next_test.test_id, 10) : null;
             
-            if (qtestData.sequenceInfo && qtestData.sequenceInfo.next_test && nextTestId && nextTestId !== currentTestId && nextTestId > 0) {
+            if (quicktestwpData.sequenceInfo && quicktestwpData.sequenceInfo.next_test && nextTestId && nextTestId !== currentTestId && nextTestId > 0) {
                 // Auto-submit with placeholder data (user info will be collected at the end)
                 const timeCompleted = new Date().toISOString();
                 let timeTaken = 0;
-                if (timeStarted && qtestData.timeLimit > 0) {
+                if (timeStarted && quicktestwpData.timeLimit > 0) {
                     const startTime = new Date(timeStarted);
                     const endTime = new Date(timeCompleted);
                     timeTaken = Math.floor((endTime - startTime) / 1000);
                 }
 
                 const formData = {
-                    action: 'qtest_submit_result',
-                    nonce: $('#qtest_nonce').val(),
-                    test_id: $('#qtest_test_id').val(),
+                    action: 'quicktestwp_submit_result',
+                    nonce: $('#quicktestwp_nonce').val(),
+                    test_id: $('#quicktestwp_test_id').val(),
                     first_name: 'SEQUENCE_IN_PROGRESS', // Placeholder - will be replaced at final submission
                     last_name: 'SEQUENCE_IN_PROGRESS',
                     email: 'sequence@placeholder.local',
@@ -363,7 +363,7 @@ jQuery(document).ready(function ($) {
                 };
 
                 $.ajax({
-                    url: qtestAjax.ajaxurl,
+                    url: quicktestwpAjax.ajaxurl,
                     type: 'POST',
                     data: formData,
                     success: function (response) {
@@ -371,15 +371,15 @@ jQuery(document).ready(function ($) {
                             // Mark test as completed (disable security)
                             if (typeof QTestSecurity !== 'undefined') {
                                 QTestSecurity.markTestCompleted();
-                                $(document).trigger('qtest:testCompleted');
+                                $(document).trigger('quicktestwp:testCompleted');
                             }
 
                             // Clear session storage
-                            const testSessionKey = 'qtest_session_' + qtestData.testId;
+                            const testSessionKey = 'quicktestwp_session_' + quicktestwpData.testId;
                             sessionStorage.removeItem(testSessionKey);
 
                             // Continue to next test
-                            const nextTest = qtestData.sequenceInfo.next_test;
+                            const nextTest = quicktestwpData.sequenceInfo.next_test;
                             const autoContinue = nextTest.auto_continue == 1;
 
                             // Remove beforeunload handler before navigation (Bug 3 fix)
@@ -398,14 +398,14 @@ jQuery(document).ready(function ($) {
                                     QTestPopup.success('Test completed! Loading next test...', function () {
                                         const url = new URL(window.location.href);
                                         url.searchParams.set('test_id', nextTest.test_id);
-                                        url.searchParams.set('sequence_id', qtestData.sequenceInfo.sequence_id);
+                                        url.searchParams.set('sequence_id', quicktestwpData.sequenceInfo.sequence_id);
                                         window.location.href = url.toString();
                                     });
                                 } else {
                                     // Fallback: direct redirect
                                     const url = new URL(window.location.href);
                                     url.searchParams.set('test_id', nextTest.test_id);
-                                    url.searchParams.set('sequence_id', qtestData.sequenceInfo.sequence_id);
+                                    url.searchParams.set('sequence_id', quicktestwpData.sequenceInfo.sequence_id);
                                     window.location.href = url.toString();
                                 }
                             } else {
@@ -421,7 +421,7 @@ jQuery(document).ready(function ($) {
                                                 }
                                                 const url = new URL(window.location.href);
                                                 url.searchParams.set('test_id', nextTest.test_id);
-                                                url.searchParams.set('sequence_id', qtestData.sequenceInfo.sequence_id);
+                                                url.searchParams.set('sequence_id', quicktestwpData.sequenceInfo.sequence_id);
                                                 window.location.href = url.toString();
                                             } else {
                                                 // User declined - show completion form for final submission
@@ -450,16 +450,16 @@ jQuery(document).ready(function ($) {
             }
 
             // Show completion form (only for single tests or final test in sequence)
-            $('.qtest-quiz-wrapper').hide();
-            $('#qtest-review-section').hide();
-            $('#qtest-completion-form').show();
-            $('#qtest_answers').val(JSON.stringify(answers));
-            qtestUiStage = 'completion';
+            $('.quicktestwp-quiz-wrapper').hide();
+            $('#quicktestwp-review-section').hide();
+            $('#quicktestwp-completion-form').show();
+            $('#quicktestwp_answers').val(JSON.stringify(answers));
+            quicktestwpUiStage = 'completion';
         }
 
         // Original submit button handler (for direct submit without review)
-        $('#qtest-submit-btn').on('click', function () {
-            const questionPage = $('.qtest-question-page.active');
+        $('#quicktestwp-submit-btn').on('click', function () {
+            const questionPage = $('.quicktestwp-question-page.active');
             const questionId = questionPage.data('question-id');
 
             // Check if answer is selected
@@ -496,7 +496,7 @@ jQuery(document).ready(function ($) {
 
         function updateTimerDisplay() {
             if (timeRemaining <= 0) {
-                $('#qtest-timer-display').text('00:00').addClass('qtest-timer-expired');
+                $('#quicktestwp-timer-display').text('00:00').addClass('quicktestwp-timer-expired');
                 return;
             }
 
@@ -504,23 +504,23 @@ jQuery(document).ready(function ($) {
             const seconds = timeRemaining % 60;
             const display = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
 
-            $('#qtest-timer-display').text(display);
+            $('#quicktestwp-timer-display').text(display);
 
             // Change color when time is running low
             if (timeRemaining <= 60) {
-                $('#qtest-timer-display').addClass('qtest-timer-warning');
+                $('#quicktestwp-timer-display').addClass('quicktestwp-timer-warning');
             } else {
-                $('#qtest-timer-display').removeClass('qtest-timer-warning');
+                $('#quicktestwp-timer-display').removeClass('quicktestwp-timer-warning');
             }
         }
 
         function timerExpired() {
             // For sequences with next test, auto-submit instead of showing form
             // Also check that next_test.test_id is different from current test_id to prevent loops
-            const currentTestId = parseInt($('#qtest_test_id').val(), 10);
-            const nextTestId = qtestData.sequenceInfo && qtestData.sequenceInfo.next_test ? parseInt(qtestData.sequenceInfo.next_test.test_id, 10) : null;
+            const currentTestId = parseInt($('#quicktestwp_test_id').val(), 10);
+            const nextTestId = quicktestwpData.sequenceInfo && quicktestwpData.sequenceInfo.next_test ? parseInt(quicktestwpData.sequenceInfo.next_test.test_id, 10) : null;
             
-            if (qtestData.sequenceInfo && qtestData.sequenceInfo.next_test && nextTestId && nextTestId !== currentTestId && nextTestId > 0) {
+            if (quicktestwpData.sequenceInfo && quicktestwpData.sequenceInfo.next_test && nextTestId && nextTestId !== currentTestId && nextTestId > 0) {
                 submitTest();
                 return;
             }
@@ -533,7 +533,7 @@ jQuery(document).ready(function ($) {
                 });
                 // Also show form immediately (in case user closes popup quickly)
                 setTimeout(function () {
-                    if ($('#qtest-completion-form').is(':hidden')) {
+                    if ($('#quicktestwp-completion-form').is(':hidden')) {
                         showCompletionForm();
                     }
                 }, 500);
@@ -546,10 +546,10 @@ jQuery(document).ready(function ($) {
         function showCompletionForm() {
             // Bug 1 fix: For sequences with next test, auto-submit instead of showing form
             // Also check that next_test.test_id is different from current test_id to prevent loops
-            const currentTestId = parseInt($('#qtest_test_id').val(), 10);
-            const nextTestId = qtestData.sequenceInfo && qtestData.sequenceInfo.next_test ? parseInt(qtestData.sequenceInfo.next_test.test_id, 10) : null;
+            const currentTestId = parseInt($('#quicktestwp_test_id').val(), 10);
+            const nextTestId = quicktestwpData.sequenceInfo && quicktestwpData.sequenceInfo.next_test ? parseInt(quicktestwpData.sequenceInfo.next_test.test_id, 10) : null;
             
-            if (qtestData.sequenceInfo && qtestData.sequenceInfo.next_test && nextTestId && nextTestId !== currentTestId && nextTestId > 0) {
+            if (quicktestwpData.sequenceInfo && quicktestwpData.sequenceInfo.next_test && nextTestId && nextTestId !== currentTestId && nextTestId > 0) {
                 // Call submitTest() which handles sequence auto-submit
                 submitTest();
                 return; // Don't show form for intermediate tests
@@ -561,50 +561,50 @@ jQuery(document).ready(function ($) {
             }
 
             // Set stage to completion BEFORE tracking (Bug 4 fix: prevent speed popup during completion)
-            qtestUiStage = 'completion';
+            quicktestwpUiStage = 'completion';
 
             // Track time for current question (only if still in quiz stage)
-            const currentQuestionPage = $('.qtest-question-page.active');
+            const currentQuestionPage = $('.quicktestwp-question-page.active');
             const currentQuestionId = currentQuestionPage.data('question-id');
             // Don't track question end here - we're already in completion stage
 
             // Calculate time taken
             const timeCompleted = new Date().toISOString();
             let timeTaken = 0;
-            if (timeStarted && qtestData.timeLimit > 0) {
+            if (timeStarted && quicktestwpData.timeLimit > 0) {
                 const startTime = new Date(timeStarted);
                 const endTime = new Date(timeCompleted);
                 timeTaken = Math.floor((endTime - startTime) / 1000); // in seconds
             }
 
             // Set time values in hidden fields
-            $('#qtest_time_started').val(timeStarted || '');
-            $('#qtest_time_completed').val(timeCompleted);
-            $('#qtest_time_taken').val(timeTaken);
+            $('#quicktestwp_time_started').val(timeStarted || '');
+            $('#quicktestwp_time_completed').val(timeCompleted);
+            $('#quicktestwp_time_taken').val(timeTaken);
 
             // Update completion message if time expired
             if (timeRemaining <= 0) {
-                $('#qtest-completion-message').html('<strong style="color: #d93025;">⚠️ Time is up!</strong> Please provide your information to submit your test:');
+                $('#quicktestwp-completion-message').html('<strong style="color: #d93025;">⚠️ Time is up!</strong> Please provide your information to submit your test:');
             }
 
             // Hide quiz wrapper and show completion form
-            $('.qtest-quiz-wrapper').hide();
-            $('#qtest-completion-form').show();
-            $('#qtest_answers').val(JSON.stringify(answers));
+            $('.quicktestwp-quiz-wrapper').hide();
+            $('#quicktestwp-completion-form').show();
+            $('#quicktestwp_answers').val(JSON.stringify(answers));
 
             // Scroll to form smoothly
             setTimeout(function () {
                 $('html, body').animate({
-                    scrollTop: $('#qtest-completion-form').offset().top - 20
+                    scrollTop: $('#quicktestwp-completion-form').offset().top - 20
                 }, 500);
             }, 100);
         }
 
 
         // Submit result form
-        $('#qtest-result-form').on('submit', function (e) {
+        $('#quicktestwp-result-form').on('submit', function (e) {
             e.preventDefault();
-            qtestUiStage = 'completion';
+            quicktestwpUiStage = 'completion';
 
             // Stop timer if still running
             if (timerInterval) {
@@ -614,7 +614,7 @@ jQuery(document).ready(function ($) {
             // Calculate time taken
             const timeCompleted = new Date().toISOString();
             let timeTaken = 0;
-            if (timeStarted && qtestData.timeLimit > 0) {
+            if (timeStarted && quicktestwpData.timeLimit > 0) {
                 const startTime = new Date(timeStarted);
                 const endTime = new Date(timeCompleted);
                 timeTaken = Math.floor((endTime - startTime) / 1000); // in seconds
@@ -623,9 +623,9 @@ jQuery(document).ready(function ($) {
             // Don't track question end here - we're in completion stage (Bug 4 fix)
 
             const formData = {
-                action: 'qtest_submit_result',
-                nonce: $('#qtest_nonce').val(),
-                test_id: $('#qtest_test_id').val(),
+                action: 'quicktestwp_submit_result',
+                nonce: $('#quicktestwp_nonce').val(),
+                test_id: $('#quicktestwp_test_id').val(),
                 first_name: $('#first_name').val(),
                 last_name: $('#last_name').val(),
                 email: $('#email').val(),
@@ -637,7 +637,7 @@ jQuery(document).ready(function ($) {
                 };
 
             $.ajax({
-                url: qtestAjax.ajaxurl,
+                url: quicktestwpAjax.ajaxurl,
                 type: 'POST',
                 data: formData,
                 success: function (response) {
@@ -645,18 +645,18 @@ jQuery(document).ready(function ($) {
                         // Mark test as completed (disable security)
                         if (typeof QTestSecurity !== 'undefined') {
                             QTestSecurity.markTestCompleted();
-                            $(document).trigger('qtest:testCompleted');
+                            $(document).trigger('quicktestwp:testCompleted');
                         }
 
                         // Clear session storage
-                        const testSessionKey = 'qtest_session_' + qtestData.testId;
+                        const testSessionKey = 'quicktestwp_session_' + quicktestwpData.testId;
                         sessionStorage.removeItem(testSessionKey);
 
                         // Check if there's a next test in sequence (Bug 2 fix: ensure next_test is valid and not null)
                         // Also check that next_test.test_id is different from current test_id to prevent loops
-                        const currentTestId = parseInt($('#qtest_test_id').val(), 10);
-                        const hasSequenceInfo = qtestData.sequenceInfo && qtestData.sequenceInfo.sequence_id;
-                        const nextTestObj = qtestData.sequenceInfo && qtestData.sequenceInfo.next_test ? qtestData.sequenceInfo.next_test : null;
+                        const currentTestId = parseInt($('#quicktestwp_test_id').val(), 10);
+                        const hasSequenceInfo = quicktestwpData.sequenceInfo && quicktestwpData.sequenceInfo.sequence_id;
+                        const nextTestObj = quicktestwpData.sequenceInfo && quicktestwpData.sequenceInfo.next_test ? quicktestwpData.sequenceInfo.next_test : null;
                         const nextTestId = nextTestObj && nextTestObj.test_id ? parseInt(nextTestObj.test_id, 10) : null;
                         
                         // Only show next test popup if:
@@ -665,7 +665,7 @@ jQuery(document).ready(function ($) {
                         // 3. next_test.test_id is valid and different from current test
                         // 4. next_test.test_id is a positive number
                         if (hasSequenceInfo && nextTestObj && nextTestId && nextTestId !== currentTestId && nextTestId > 0 && !isNaN(nextTestId)) {
-                            const nextTest = qtestData.sequenceInfo.next_test;
+                            const nextTest = quicktestwpData.sequenceInfo.next_test;
                             const autoContinue = nextTest.auto_continue == 1;
 
                             // Remove beforeunload handler BEFORE navigation (Bug 3 fix - must be done synchronously)
@@ -680,14 +680,14 @@ jQuery(document).ready(function ($) {
                                         // Reload page with next test
                                         const url = new URL(window.location.href);
                                         url.searchParams.set('test_id', nextTest.test_id);
-                                        url.searchParams.set('sequence_id', qtestData.sequenceInfo.sequence_id);
+                                        url.searchParams.set('sequence_id', quicktestwpData.sequenceInfo.sequence_id);
                                         window.location.href = url.toString();
                                     });
                                 } else {
                                     // Fallback: direct redirect
                                     const url = new URL(window.location.href);
                                     url.searchParams.set('test_id', nextTest.test_id);
-                                    url.searchParams.set('sequence_id', qtestData.sequenceInfo.sequence_id);
+                                    url.searchParams.set('sequence_id', quicktestwpData.sequenceInfo.sequence_id);
                                     window.location.href = url.toString();
                                 }
                             } else {
@@ -703,38 +703,38 @@ jQuery(document).ready(function ($) {
                                                 }
                                                 const url = new URL(window.location.href);
                                                 url.searchParams.set('test_id', nextTest.test_id);
-                                                url.searchParams.set('sequence_id', qtestData.sequenceInfo.sequence_id);
+                                                url.searchParams.set('sequence_id', quicktestwpData.sequenceInfo.sequence_id);
                                                 window.location.href = url.toString();
                                             } else {
                                                 // Show results
-                                                $('#qtest-completion-form').hide();
-                                                $('#qtest-score-value').text(response.data.score);
-                                                $('#qtest-total-value').text(response.data.total);
+                                                $('#quicktestwp-completion-form').hide();
+                                                $('#quicktestwp-score-value').text(response.data.score);
+                                                $('#quicktestwp-total-value').text(response.data.total);
                                                 const percentage = ((response.data.score / response.data.total) * 100).toFixed(2);
-                                                $('#qtest-percentage-value').text(percentage);
-                                                $('#qtest-result-display').show();
+                                                $('#quicktestwp-percentage-value').text(percentage);
+                                                $('#quicktestwp-result-display').show();
                                             }
                                         }
                                     );
                                 } else {
                                     // Fallback: show results
-                                    $('#qtest-completion-form').hide();
-                                    $('#qtest-score-value').text(response.data.score);
-                                    $('#qtest-total-value').text(response.data.total);
+                                    $('#quicktestwp-completion-form').hide();
+                                    $('#quicktestwp-score-value').text(response.data.score);
+                                    $('#quicktestwp-total-value').text(response.data.total);
                                     const percentage = ((response.data.score / response.data.total) * 100).toFixed(2);
-                                    $('#qtest-percentage-value').text(percentage);
-                                    $('#qtest-result-display').show();
+                                    $('#quicktestwp-percentage-value').text(percentage);
+                                    $('#quicktestwp-result-display').show();
                                 }
                                 return; // Don't show results yet if confirmation needed
                             }
                         } else {
                             // No next test, show results
-                            $('#qtest-completion-form').hide();
-                            $('#qtest-score-value').text(response.data.score);
-                            $('#qtest-total-value').text(response.data.total);
+                            $('#quicktestwp-completion-form').hide();
+                            $('#quicktestwp-score-value').text(response.data.score);
+                            $('#quicktestwp-total-value').text(response.data.total);
                             const percentage = ((response.data.score / response.data.total) * 100).toFixed(2);
-                            $('#qtest-percentage-value').text(percentage);
-                            $('#qtest-result-display').show();
+                            $('#quicktestwp-percentage-value').text(percentage);
+                            $('#quicktestwp-result-display').show();
                         }
                     } else {
                         if (typeof QTestPopup !== 'undefined') {
@@ -758,18 +758,18 @@ jQuery(document).ready(function ($) {
         function showQuestion(index) {
             // Track end time for previous question
             if (currentQuestion >= 0) {
-                const prevQuestionPage = $('.qtest-question-page').eq(currentQuestion);
+                const prevQuestionPage = $('.quicktestwp-question-page').eq(currentQuestion);
                 const prevQuestionId = prevQuestionPage.data('question-id');
                 if (prevQuestionId && questionStartTimes[prevQuestionId]) {
                     trackQuestionEnd(prevQuestionId);
                 }
             }
 
-            $('.qtest-question-page').removeClass('active');
-            $('.qtest-question-page').eq(index).addClass('active');
+            $('.quicktestwp-question-page').removeClass('active');
+            $('.quicktestwp-question-page').eq(index).addClass('active');
 
             // Restore selected answer if exists
-            const questionPage = $('.qtest-question-page').eq(index);
+            const questionPage = $('.quicktestwp-question-page').eq(index);
             const questionId = questionPage.data('question-id');
 
             // Track start time for new question
@@ -785,77 +785,77 @@ jQuery(document).ready(function ($) {
 
             if (answers[questionId]) {
                 if (questionType === 'multiple_choice' || questionType === 'true_false') {
-                    questionPage.find('.qtest-answer-option').removeClass('selected');
-                    questionPage.find('.qtest-answer-option[data-option="' + answers[questionId] + '"]').addClass('selected');
+                    questionPage.find('.quicktestwp-answer-option').removeClass('selected');
+                    questionPage.find('.quicktestwp-answer-option[data-option="' + answers[questionId] + '"]').addClass('selected');
                 } else if (questionType === 'short_answer') {
-                    questionPage.find('.qtest-short-answer-input').val(answers[questionId]);
+                    questionPage.find('.quicktestwp-short-answer-input').val(answers[questionId]);
                 }
             } else {
                 if (questionType === 'multiple_choice' || questionType === 'true_false') {
-                    questionPage.find('.qtest-answer-option').removeClass('selected');
+                    questionPage.find('.quicktestwp-answer-option').removeClass('selected');
                 } else if (questionType === 'short_answer') {
-                    questionPage.find('.qtest-short-answer-input').val('');
+                    questionPage.find('.quicktestwp-short-answer-input').val('');
                 }
             }
         }
 
         function updateProgress() {
             const progress = ((currentQuestion + 1) / totalQuestions) * 100;
-            $('.qtest-progress-fill').css('width', progress + '%');
-            $('.qtest-progress-indicator').css('left', progress + '%');
+            $('.quicktestwp-progress-fill').css('width', progress + '%');
+            $('.quicktestwp-progress-indicator').css('left', progress + '%');
         }
 
         function updateNavigation() {
             // Back button
             if (currentQuestion === 0) {
-                $('#qtest-back-btn').prop('disabled', true);
+                $('#quicktestwp-back-btn').prop('disabled', true);
             } else {
-                $('#qtest-back-btn').prop('disabled', false);
+                $('#quicktestwp-back-btn').prop('disabled', false);
             }
 
             // Next/Review button
             if (currentQuestion === totalQuestions - 1) {
-                $('#qtest-next-btn').hide();
-                $('#qtest-review-btn').show();
-                $('#qtest-submit-btn').hide();
+                $('#quicktestwp-next-btn').hide();
+                $('#quicktestwp-review-btn').show();
+                $('#quicktestwp-submit-btn').hide();
             } else {
-                $('#qtest-next-btn').show();
-                $('#qtest-review-btn').hide();
-                $('#qtest-submit-btn').hide();
+                $('#quicktestwp-next-btn').show();
+                $('#quicktestwp-review-btn').hide();
+                $('#quicktestwp-submit-btn').hide();
             }
 
             // Enable next if answer already selected
-            const questionPage = $('.qtest-question-page.active');
+            const questionPage = $('.quicktestwp-question-page.active');
             const questionId = questionPage.data('question-id');
             const questionType = questionPage.data('question-type') || 'multiple_choice';
 
             if (answers[questionId]) {
                 // For short answer, check if input has value
                 if (questionType === 'short_answer') {
-                    const inputValue = questionPage.find('.qtest-short-answer-input').val().trim();
-                    $('#qtest-next-btn').prop('disabled', !inputValue);
+                    const inputValue = questionPage.find('.quicktestwp-short-answer-input').val().trim();
+                    $('#quicktestwp-next-btn').prop('disabled', !inputValue);
                 } else {
-                    $('#qtest-next-btn').prop('disabled', false);
+                    $('#quicktestwp-next-btn').prop('disabled', false);
                 }
             } else {
-                $('#qtest-next-btn').prop('disabled', true);
+                $('#quicktestwp-next-btn').prop('disabled', true);
             }
         }
-    } // End of qtestData check
+    } // End of quicktestwpData check
 
     // Result lookup functionality (always available)
-    $('#qtest-lookup-form').on('submit', function (e) {
+    $('#quicktestwp-lookup-form').on('submit', function (e) {
         e.preventDefault();
 
         const formData = {
-            action: 'qtest_get_result',
-            nonce: $('#qtest_nonce').val(),
+            action: 'quicktestwp_get_result',
+            nonce: $('#quicktestwp_nonce').val(),
             test_id: $('#lookup_test_id').val(),
             email: $('#lookup_email').val()
         };
 
         $.ajax({
-            url: qtestAjax.ajaxurl,
+            url: quicktestwpAjax.ajaxurl,
             type: 'POST',
             data: formData,
             success: function (response) {
@@ -882,7 +882,7 @@ jQuery(document).ready(function ($) {
                     detailsHtml += '</ul>';
 
                     $('#lookup-details').html(detailsHtml);
-                    $('#qtest-lookup-result').show();
+                    $('#quicktestwp-lookup-result').show();
                 } else {
                     if (typeof QTestPopup !== 'undefined') {
                         QTestPopup.error(response.data.message || 'No result found.');

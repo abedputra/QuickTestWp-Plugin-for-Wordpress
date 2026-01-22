@@ -6,13 +6,13 @@
     'use strict';
     
     // Only apply security if quiz is active
-    if (typeof qtestData === 'undefined') {
+    if (typeof quicktestwpData === 'undefined') {
         return;
     }
     
     let testStarted = false;
     let testCompleted = false;
-    const testSessionKey = 'qtest_session_' + qtestData.testId;
+    const testSessionKey = 'quicktestwp_session_' + quicktestwpData.testId;
     
     // Tab switch detection variables (shared across all calls)
     let tabSwitchListenersAdded = false;
@@ -196,8 +196,8 @@
                 const target = e.target;
                 if (target.tagName === 'INPUT' || 
                     target.tagName === 'TEXTAREA' || 
-                    $(target).closest('.qtest-completion-form').length > 0 ||
-                    $(target).closest('.qtest-result-display').length > 0) {
+                    $(target).closest('.quicktestwp-completion-form').length > 0 ||
+                    $(target).closest('.quicktestwp-result-display').length > 0) {
                     return true;
                 }
                 e.preventDefault();
@@ -307,17 +307,17 @@
                             QTestPopup.error('You have switched tabs/windows too many times. The test will be submitted automatically.', function() {
                                 isShowingPopup = false;
                                 // Trigger form submission
-                                if ($('#qtest-submit-btn').length && $('#qtest-submit-btn').is(':visible')) {
-                                    $('#qtest-submit-btn').click();
+                                if ($('#quicktestwp-submit-btn').length && $('#quicktestwp-submit-btn').is(':visible')) {
+                                    $('#quicktestwp-submit-btn').click();
                                 } else {
                                     // Show completion form
-                                    $(document).trigger('qtest:forceSubmit');
+                                    $(document).trigger('quicktestwp:forceSubmit');
                                 }
                             });
                         } else {
                             isShowingPopup = false;
                             // Show completion form directly
-                            $(document).trigger('qtest:forceSubmit');
+                            $(document).trigger('quicktestwp:forceSubmit');
                         }
                     } else {
                         if (typeof QTestPopup !== 'undefined') {
@@ -376,27 +376,27 @@
         disablePrintScreen();
         
         // Add visual indicator that security is active
-        if ($('.qtest-security-indicator').length === 0) {
-            $('body').append('<div class="qtest-security-indicator" title="Security mode active" style="position: fixed; bottom: 10px; right: 10px; width: 12px; height: 12px; background-color: #34a853; border-radius: 50%; z-index: 9999; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>');
+        if ($('.quicktestwp-security-indicator').length === 0) {
+            $('body').append('<div class="quicktestwp-security-indicator" title="Security mode active" style="position: fixed; bottom: 10px; right: 10px; width: 12px; height: 12px; background-color: #34a853; border-radius: 50%; z-index: 9999; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>');
         }
     }
     
     // Remove security indicator
     function removeSecurityIndicator() {
-        $('.qtest-security-indicator').remove();
+        $('.quicktestwp-security-indicator').remove();
     }
     
     // Initialize security when page loads (if test is active)
     $(document).ready(function() {
         // Wait a bit for quiz to initialize
         setTimeout(function() {
-            if ($('.qtest-question-page.active').length > 0 && !testCompleted) {
+            if ($('.quicktestwp-question-page.active').length > 0 && !testCompleted) {
                 initSecurity();
             }
         }, 500);
         
         // Also initialize when first question is shown
-        $(document).on('qtest:testStarted', function() {
+        $(document).on('quicktestwp:testStarted', function() {
             if (!testStarted) {
                 initSecurity();
             }
@@ -462,7 +462,7 @@
     }
     
     // Mark test as completed when form is submitted
-    $(document).on('qtest:testCompleted', function() {
+    $(document).on('quicktestwp:testCompleted', function() {
         markTestCompleted();
         // Re-enable all features
         testCompleted = true;

@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Plugin Name: QTest
- * Plugin URI: https://github.com/abedputra/QTest-Plugin-Wordpress
+ * Plugin Name: QuickTestWP
+ * Plugin URI: https://github.com/abedputra/QuickTestWP-Plugin-Wordpress
  * Description: A comprehensive quiz/test plugin with image upload support, progress tracking, and email results.
  * Version: 1.0.0
  * Requires at least: 5.0
@@ -11,7 +11,7 @@
  * Author URI: https://abedputra.my.id
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: qtest
+ * Text Domain: quicktestwp
  */
 
 // Exit if accessed directly
@@ -20,21 +20,21 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('QTEST_VERSION', '1.0.0');
-define('QTEST_PLUGIN_DIR', plugin_dir_path(__FILE__));
-define('QTEST_PLUGIN_URL', plugin_dir_url(__FILE__));
-define('QTEST_PLUGIN_FILE', __FILE__);
+define('QUICKTESTWP_VERSION', '1.0.0');
+define('QUICKTESTWP_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define('QUICKTESTWP_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('QUICKTESTWP_PLUGIN_FILE', __FILE__);
 
 // Include required files
-require_once QTEST_PLUGIN_DIR . 'includes/class-qtest-database.php';
-require_once QTEST_PLUGIN_DIR . 'includes/class-qtest-ajax.php';
-require_once QTEST_PLUGIN_DIR . 'includes/class-qtest-admin.php';
-require_once QTEST_PLUGIN_DIR . 'includes/class-qtest-frontend.php';
+require_once QUICKTESTWP_PLUGIN_DIR . 'includes/class-quicktestwp-database.php';
+require_once QUICKTESTWP_PLUGIN_DIR . 'includes/class-quicktestwp-ajax.php';
+require_once QUICKTESTWP_PLUGIN_DIR . 'includes/class-quicktestwp-admin.php';
+require_once QUICKTESTWP_PLUGIN_DIR . 'includes/class-quicktestwp-frontend.php';
 
 /**
- * Main QTest Plugin Class
+ * Main QuickTestWP Plugin Class
  */
-class QTest
+class QuickTestWP
 {
 
     private static $instance = null;
@@ -55,8 +55,8 @@ class QTest
     private function init_hooks()
     {
         // Activation and deactivation hooks
-        register_activation_hook(QTEST_PLUGIN_FILE, array($this, 'activate'));
-        register_deactivation_hook(QTEST_PLUGIN_FILE, array($this, 'deactivate'));
+        register_activation_hook(QUICKTESTWP_PLUGIN_FILE, array($this, 'activate'));
+        register_deactivation_hook(QUICKTESTWP_PLUGIN_FILE, array($this, 'deactivate'));
 
         // Initialize AJAX handlers (once for both admin and frontend)
         add_action('init', array($this, 'init_ajax'));
@@ -75,29 +75,29 @@ class QTest
     {
         static $ajax_initialized = false;
         if (!$ajax_initialized) {
-            new QTest_Ajax();
+            new QuickTestWP_Ajax();
             $ajax_initialized = true;
         }
     }
 
     public function activate()
     {
-        QTest_Database::create_tables();
-        QTest_Database::upgrade_database();
+        QuickTestWP_Database::create_tables();
+        QuickTestWP_Database::upgrade_database();
         flush_rewrite_rules();
     }
 
     public function upgrade_database_check()
     {
         // Run database upgrade check (safe to run multiple times)
-        QTest_Database::upgrade_database();
+        QuickTestWP_Database::upgrade_database();
     }
 
     public function init_admin()
     {
         static $admin_initialized = false;
         if (!$admin_initialized && is_admin()) {
-            new QTest_Admin();
+            new QuickTestWP_Admin();
             $admin_initialized = true;
         }
     }
@@ -106,7 +106,7 @@ class QTest
     {
         static $frontend_initialized = false;
         if (!$frontend_initialized && !is_admin()) {
-            new QTest_Frontend();
+            new QuickTestWP_Frontend();
             $frontend_initialized = true;
         }
     }
@@ -118,4 +118,4 @@ class QTest
 }
 
 // Initialize the plugin
-QTest::get_instance();
+QuickTestWP::get_instance();

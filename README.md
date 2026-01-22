@@ -1,4 +1,4 @@
-# QTest - WordPress Quiz & Test Plugin
+# QuickTestWP - WordPress Quiz & Test Plugin
 
 [![License: GPL v2 or later](https://img.shields.io/badge/License-GPL%20v2%2B-blue.svg)](https://www.gnu.org/licenses/gpl-2.0)
 [![WordPress](https://img.shields.io/badge/WordPress-5.0%2B-blue.svg)](https://wordpress.org/)
@@ -57,23 +57,23 @@ A comprehensive WordPress quiz and test plugin with image upload support, progre
 1. **Download the plugin**
    - Download the plugin files or clone this repository
    ```bash
-   git clone https://github.com/abedputra/qtest.git
+   git clone https://github.com/abedputra/quicktestwp.git
    ```
 
 2. **Upload to WordPress**
    - Navigate to your WordPress installation directory
    - Go to `wp-content/plugins/`
-   - Upload the `qtest` folder here
+   - Upload the `quicktestwp` folder here
 
 3. **Activate the plugin**
    - Log in to your WordPress admin panel
    - Go to **Plugins** → **Installed Plugins**
-   - Find **QTest** and click **Activate**
+   - Find **QuickTestWP** and click **Activate**
 
 ### Method 2: WordPress Admin Upload
 
 1. **Zip the plugin folder**
-   - Compress the `qtest` folder into a `.zip` file
+   - Compress the `quicktestwp` folder into a `.zip` file
 
 2. **Upload via WordPress**
    - Go to **Plugins** → **Add New** → **Upload Plugin**
@@ -83,7 +83,7 @@ A comprehensive WordPress quiz and test plugin with image upload support, progre
 ## 🎯 Quick Start
 
 1. **Create Your First Test**
-   - Go to **QTest** → **Add New** in your WordPress admin
+   - Go to **QuickTestWP** → **Add New** in your WordPress admin
    - Enter a title and description for your test
    - Optionally set a time limit (in minutes)
    - Click **Save Test**
@@ -99,9 +99,9 @@ A comprehensive WordPress quiz and test plugin with image upload support, progre
 
 3. **Insert Test into Post/Page**
    - Edit any post or page
-   - Look for the **Insert QTest** meta box on the right sidebar
+   - Look for the **Insert QuickTestWP** meta box on the right sidebar
    - Select your test and click **Insert Test**
-   - Or manually add: `[qtest id="1"]` (replace 1 with your test ID)
+   - Or manually add: `[quicktestwp id="1"]` (replace 1 with your test ID)
 
 4. **Publish and Test**
    - Publish your post/page
@@ -112,7 +112,7 @@ A comprehensive WordPress quiz and test plugin with image upload support, progre
 
 ### Creating a Test
 
-1. Navigate to **QTest** → **Add New**
+1. Navigate to **QuickTestWP** → **Add New**
 2. Fill in the test details:
    - **Title**: Name of your test
    - **Description**: Optional description
@@ -138,7 +138,7 @@ A comprehensive WordPress quiz and test plugin with image upload support, progre
 
 ### Importing Questions from CSV
 
-1. Go to **QTest** → **Import Questions**
+1. Go to **QuickTestWP** → **Import Questions**
 2. Select the test you want to import questions into
 3. Download the sample CSV file to see the format
 4. Prepare your CSV file with columns:
@@ -158,7 +158,7 @@ A comprehensive WordPress quiz and test plugin with image upload support, progre
 Display a single test on any post or page:
 
 ```
-[qtest id="1"]
+[quicktestwp id="1"]
 ```
 
 **Parameters:**
@@ -166,7 +166,7 @@ Display a single test on any post or page:
 
 **Example:**
 ```
-[qtest id="5"]
+[quicktestwp id="5"]
 ```
 
 ### Test Sequence Shortcode
@@ -174,7 +174,7 @@ Display a single test on any post or page:
 Display a sequence of tests:
 
 ```
-[qtest_sequence id="1"]
+[quicktestwp_sequence id="1"]
 ```
 
 **Parameters:**
@@ -182,25 +182,25 @@ Display a sequence of tests:
 
 **Example:**
 ```
-[qtest_sequence id="3"]
+[quicktestwp_sequence id="3"]
 ```
 
 ### Using Shortcodes in Posts/Pages
 
 **Method 1: Using the Meta Box**
 1. Edit your post or page
-2. Look for the **Insert QTest** meta box in the sidebar
+2. Look for the **Insert QuickTestWP** meta box in the sidebar
 3. Select a test from the dropdown
 4. Click **Insert Test** button
 
 **Method 2: Manual Entry**
 - Simply type the shortcode in your post editor:
   ```
-  [qtest id="1"]
+  [quicktestwp id="1"]
   ```
 
 **Method 3: Classic Editor Button**
-- In the Classic Editor, click the **QTest** button in the toolbar
+- In the Classic Editor, click the **QuickTestWP** button in the toolbar
 - Enter the test ID when prompted
 
 ## 📝 Question Types
@@ -226,7 +226,7 @@ Test sequences allow you to chain multiple tests together. Users take tests one 
 
 ### Creating a Sequence
 
-1. Go to **QTest** → **Add New Sequence**
+1. Go to **QuickTestWP** → **Add New Sequence**
 2. Enter sequence title and description
 3. Add tests to the sequence:
    - Select a test from the dropdown
@@ -240,7 +240,7 @@ Test sequences allow you to chain multiple tests together. Users take tests one 
 
 Insert a sequence using the shortcode:
 ```
-[qtest_sequence id="1"]
+[quicktestwp_sequence id="1"]
 ```
 
 Users will start with the first test in the sequence and progress through them automatically (if auto-continue is enabled).
@@ -269,11 +269,11 @@ Users will start with the first test in the sequence and progress through them a
 
 The plugin includes CSS classes that you can customize:
 
-- `.qtest-container`: Main container
-- `.qtest-question-page`: Individual question page
-- `.qtest-answer-option`: Answer option button
-- `.qtest-progress-bar`: Progress bar container
-- `.qtest-timer`: Timer display
+- `.quicktestwp-container`: Main container
+- `.quicktestwp-question-page`: Individual question page
+- `.quicktestwp-answer-option`: Answer option button
+- `.quicktestwp-progress-bar`: Progress bar container
+- `.quicktestwp-timer`: Timer display
 
 Add custom CSS in your theme's `style.css` or use a custom CSS plugin.
 
@@ -285,8 +285,8 @@ Contributions are welcome! Here's how you can help:
 
 1. **Fork the repository**
    ```bash
-   git clone https://github.com/abedputra/qtest.git
-   cd qtest
+   git clone https://github.com/abedputra/quicktestwp.git
+   cd quicktestwp
    ```
 
 2. **Create a feature branch**
@@ -336,10 +336,10 @@ Contributions are welcome! Here's how you can help:
 
 - **Author**: Abed Putra
 - **Website**: [https://abedputra.my.id](https://abedputra.my.id)
-- **Issues**: [GitHub Issues](https://github.com/abedputra/qtest/issues)
+- **Issues**: [GitHub Issues](https://github.com/abedputra/quicktestwp/issues)
 
 If you encounter any issues or have questions:
-1. Check the [Issues](https://github.com/abedputra/qtest/issues) page
+1. Check the [Issues](https://github.com/abedputra/quicktestwp/issues) page
 2. Create a new issue with:
    - Description of the problem
    - Steps to reproduce

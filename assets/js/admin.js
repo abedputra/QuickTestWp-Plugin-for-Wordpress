@@ -1,10 +1,10 @@
 jQuery(document).ready(function($) {
     'use strict';
     
-    let questionIndex = $('.qtest-question-item').length;
+    let questionIndex = $('.quicktestwp-question-item').length;
     
     // Save test
-    $('#qtest-test-form').on('submit', function(e) {
+    $('#quicktestwp-test-form').on('submit', function(e) {
         e.preventDefault();
         
         // Get selected roles
@@ -14,8 +14,8 @@ jQuery(document).ready(function($) {
         });
         
         const formData = {
-            action: 'qtest_save_test',
-            nonce: $('#qtest_nonce').val(),
+            action: 'quicktestwp_save_test',
+            nonce: $('#quicktestwp_nonce').val(),
             test_id: $('#test_id').val(),
             title: $('#test_title').val(),
             description: $('#test_description').val(),
@@ -32,12 +32,12 @@ jQuery(document).ready(function($) {
                     QTestPopup.success('Test saved successfully! You can now add questions.', function() {
                         if (formData.test_id == 0) {
                             // Reload page with test_id to show question form
-                            window.location.href = 'admin.php?page=qtest-new&test_id=' + response.data.test_id;
+                            window.location.href = 'admin.php?page=quicktestwp-new&test_id=' + response.data.test_id;
                         } else {
                             // Update hidden field
                             $('#test_id').val(response.data.test_id);
                             // Show question section if hidden
-                            if ($('#qtest-questions-list').length === 0) {
+                            if ($('#quicktestwp-questions-list').length === 0) {
                                 location.reload();
                             }
                         }
@@ -53,8 +53,8 @@ jQuery(document).ready(function($) {
     });
     
     // Add question
-    $('#qtest-add-question').on('click', function() {
-        const template = $('#qtest-question-template').html();
+    $('#quicktestwp-add-question').on('click', function() {
+        const template = $('#quicktestwp-question-template').html();
         const newQuestion = $(template.replace(/\{\{INDEX\}\}/g, questionIndex));
         newQuestion.find('[data-question-id]').attr('data-question-id', 0);
         newQuestion.find('[data-index]').attr('data-index', questionIndex);
@@ -106,14 +106,14 @@ jQuery(document).ready(function($) {
             }
         });
         
-        $('#qtest-questions-list').append(newQuestion);
+        $('#quicktestwp-questions-list').append(newQuestion);
         questionIndex++;
         
         // Initialize image upload for new question
         initImageUpload(newQuestion);
         
         // Initialize question type handler for new question
-        newQuestion.find('.qtest-question-type').trigger('change');
+        newQuestion.find('.quicktestwp-question-type').trigger('change');
         
         // Scroll to new question
         $('html, body').animate({
@@ -122,49 +122,49 @@ jQuery(document).ready(function($) {
     });
     
     // Handle question type change
-    $(document).on('change', '.qtest-question-type', function() {
-        const questionItem = $(this).closest('.qtest-question-item');
+    $(document).on('change', '.quicktestwp-question-type', function() {
+        const questionItem = $(this).closest('.quicktestwp-question-item');
         const questionType = $(this).val();
-        const optionsContainer = questionItem.find('.qtest-options-container');
+        const optionsContainer = questionItem.find('.quicktestwp-options-container');
         
         // Hide all option containers
         optionsContainer.hide();
         
         // Show relevant option container
-        const activeContainer = questionItem.find('.qtest-options-container[data-question-type="' + questionType + '"]');
+        const activeContainer = questionItem.find('.quicktestwp-options-container[data-question-type="' + questionType + '"]');
         activeContainer.show();
         
         // Update required attributes
         if (questionType === 'multiple_choice') {
-            questionItem.find('.qtest-option-row input').prop('required', true);
-            questionItem.find('.qtest-correct-answer-row select').prop('required', true);
-            questionItem.find('.qtest-options-container[data-question-type="true_false"] input, .qtest-options-container[data-question-type="short_answer"] input').prop('required', false);
+            questionItem.find('.quicktestwp-option-row input').prop('required', true);
+            questionItem.find('.quicktestwp-correct-answer-row select').prop('required', true);
+            questionItem.find('.quicktestwp-options-container[data-question-type="true_false"] input, .quicktestwp-options-container[data-question-type="short_answer"] input').prop('required', false);
         } else if (questionType === 'true_false') {
-            questionItem.find('.qtest-option-row input').prop('required', false);
-            questionItem.find('.qtest-options-container[data-question-type="true_false"] select[name="correct_answer"]').prop('required', true);
-            questionItem.find('.qtest-options-container[data-question-type="multiple_choice"] select, .qtest-options-container[data-question-type="short_answer"] input').prop('required', false);
+            questionItem.find('.quicktestwp-option-row input').prop('required', false);
+            questionItem.find('.quicktestwp-options-container[data-question-type="true_false"] select[name="correct_answer"]').prop('required', true);
+            questionItem.find('.quicktestwp-options-container[data-question-type="multiple_choice"] select, .quicktestwp-options-container[data-question-type="short_answer"] input').prop('required', false);
         } else if (questionType === 'short_answer') {
-            questionItem.find('.qtest-option-row input').prop('required', false);
-            questionItem.find('.qtest-options-container[data-question-type="short_answer"] input[name="correct_answer"]').prop('required', true);
-            questionItem.find('.qtest-options-container[data-question-type="multiple_choice"] select, .qtest-options-container[data-question-type="true_false"] select').prop('required', false);
+            questionItem.find('.quicktestwp-option-row input').prop('required', false);
+            questionItem.find('.quicktestwp-options-container[data-question-type="short_answer"] input[name="correct_answer"]').prop('required', true);
+            questionItem.find('.quicktestwp-options-container[data-question-type="multiple_choice"] select, .quicktestwp-options-container[data-question-type="true_false"] select').prop('required', false);
         }
     });
     
     // Initialize question type on page load
-    $('.qtest-question-type').each(function() {
+    $('.quicktestwp-question-type').each(function() {
         $(this).trigger('change');
     });
     
     // Save question
-    $(document).on('click', '.qtest-save-question', function() {
-        const questionItem = $(this).closest('.qtest-question-item');
+    $(document).on('click', '.quicktestwp-save-question', function() {
+        const questionItem = $(this).closest('.quicktestwp-question-item');
         const questionId = questionItem.data('question-id');
         const testId = $('#test_id').val();
-        const questionType = questionItem.find('.qtest-question-type').val();
+        const questionType = questionItem.find('.quicktestwp-question-type').val();
         
         let correctAnswer = '';
         if (questionType === 'multiple_choice') {
-            correctAnswer = questionItem.find('.qtest-correct-answer-row select[name="correct_answer"]').val() || '';
+            correctAnswer = questionItem.find('.quicktestwp-correct-answer-row select[name="correct_answer"]').val() || '';
         } else if (questionType === 'true_false') {
             correctAnswer = questionItem.find('[data-question-type="true_false"] select[name="correct_answer"]').val() || '';
         } else if (questionType === 'short_answer') {
@@ -198,7 +198,7 @@ jQuery(document).ready(function($) {
             
             // Method 3: Find by container and name attribute (works even if container is hidden)
             if (!correctAnswer) {
-                const shortAnswerContainer = questionItem.find('.qtest-options-container[data-question-type="short_answer"]');
+                const shortAnswerContainer = questionItem.find('.quicktestwp-options-container[data-question-type="short_answer"]');
                 if (shortAnswerContainer.length > 0) {
                     const input = shortAnswerContainer.find('input[name="correct_answer"]');
                     if (input.length > 0) {
@@ -214,7 +214,7 @@ jQuery(document).ready(function($) {
             if (!correctAnswer) {
                 questionItem.find('input[type="text"][name="correct_answer"]').each(function() {
                     const $input = $(this);
-                    const $container = $input.closest('.qtest-options-container');
+                    const $container = $input.closest('.quicktestwp-options-container');
                     if ($container.length > 0 && $container.data('question-type') === 'short_answer') {
                         const val = $.trim($input.val());
                         if (val !== '') {
@@ -234,13 +234,13 @@ jQuery(document).ready(function($) {
         }
         
         const formData = {
-            action: 'qtest_save_question',
-            nonce: $('#qtest_nonce').val(),
+            action: 'quicktestwp_save_question',
+            nonce: $('#quicktestwp_nonce').val(),
             question_id: questionId,
             test_id: testId,
             question_type: questionType,
             question_text: questionItem.find('[name="question_text"]').val(),
-            question_image: questionItem.find('.qtest-image-url').val(),
+            question_image: questionItem.find('.quicktestwp-image-url').val(),
             option_a: questionItem.find('[name="option_a"]').val() || '',
             option_b: questionItem.find('[name="option_b"]').val() || '',
             option_c: questionItem.find('[name="option_c"]').val() || '',
@@ -256,7 +256,7 @@ jQuery(document).ready(function($) {
             success: function(response) {
                 if (response.success) {
                     // Show success message
-                    const statusSpan = questionItem.find('.qtest-save-status');
+                    const statusSpan = questionItem.find('.quicktestwp-save-status');
                     statusSpan.show().fadeOut(3000);
                     
                     // Update question ID if new
@@ -264,7 +264,7 @@ jQuery(document).ready(function($) {
                         const newQuestionId = response.data.question_id;
                         questionItem.attr('data-question-id', newQuestionId);
                         questionItem.find('[data-question-id]').attr('data-question-id', newQuestionId);
-                        questionItem.find('.qtest-delete-question').attr('data-question-id', newQuestionId);
+                        questionItem.find('.quicktestwp-delete-question').attr('data-question-id', newQuestionId);
                         
                         // Update all IDs in the question item to use the new question ID
                         questionItem.find('input, select, textarea, label').each(function() {
@@ -317,9 +317,9 @@ jQuery(document).ready(function($) {
     });
     
     // Delete question
-    $(document).on('click', '.qtest-delete-question', function() {
+    $(document).on('click', '.quicktestwp-delete-question', function() {
         const questionId = parseInt($(this).data('question-id'), 10);
-        const questionItem = $(this).closest('.qtest-question-item');
+        const questionItem = $(this).closest('.quicktestwp-question-item');
         
         QTestPopup.confirm('Are you sure you want to delete this question?', function(confirmed) {
             if (!confirmed) {
@@ -335,8 +335,8 @@ jQuery(document).ready(function($) {
                 url: ajaxurl,
                 type: 'POST',
                 data: {
-                    action: 'qtest_delete_question',
-                    nonce: $('#qtest_nonce').val(),
+                    action: 'quicktestwp_delete_question',
+                    nonce: $('#quicktestwp_nonce').val(),
                     question_id: questionId
                 },
                 success: function(response) {
@@ -362,7 +362,7 @@ jQuery(document).ready(function($) {
     });
     
     // Delete test
-    $(document).on('click', '.qtest-delete-test', function(e) {
+    $(document).on('click', '.quicktestwp-delete-test', function(e) {
         e.preventDefault();
         
         const testId = $(this).data('test-id');
@@ -376,8 +376,8 @@ jQuery(document).ready(function($) {
                 url: ajaxurl,
                 type: 'POST',
                 data: {
-                    action: 'qtest_delete_test',
-                    nonce: $('#qtest_nonce').val(),
+                    action: 'quicktestwp_delete_test',
+                    nonce: $('#quicktestwp_nonce').val(),
                     test_id: testId
                 },
                 success: function(response) {
@@ -398,13 +398,13 @@ jQuery(document).ready(function($) {
     
     // Image upload
     function initImageUpload(container) {
-        container.find('.qtest-upload-image').on('click', function(e) {
+        container.find('.quicktestwp-upload-image').on('click', function(e) {
             e.preventDefault();
             
             const button = $(this);
-            const imageUrlInput = button.siblings('.qtest-image-url');
-            const imagePreview = button.siblings('.qtest-image-preview');
-            const removeButton = button.siblings('.qtest-remove-image');
+            const imageUrlInput = button.siblings('.quicktestwp-image-url');
+            const imagePreview = button.siblings('.quicktestwp-image-preview');
+            const removeButton = button.siblings('.quicktestwp-remove-image');
             
             const mediaUploader = wp.media({
                 title: 'Select Question Image',
@@ -424,11 +424,11 @@ jQuery(document).ready(function($) {
             mediaUploader.open();
         });
         
-        container.find('.qtest-remove-image').on('click', function(e) {
+        container.find('.quicktestwp-remove-image').on('click', function(e) {
             e.preventDefault();
             const button = $(this);
-            const imageUrlInput = button.siblings('.qtest-image-url');
-            const imagePreview = button.siblings('.qtest-image-preview');
+            const imageUrlInput = button.siblings('.quicktestwp-image-url');
+            const imagePreview = button.siblings('.quicktestwp-image-preview');
             
             imageUrlInput.val('');
             imagePreview.html('');
@@ -437,12 +437,12 @@ jQuery(document).ready(function($) {
     }
     
     // Initialize image upload for existing questions
-    $('.qtest-question-item').each(function() {
+    $('.quicktestwp-question-item').each(function() {
         initImageUpload($(this));
     });
     
     // Copy shortcode button
-    $(document).on('click', '.qtest-copy-shortcode', function() {
+    $(document).on('click', '.quicktestwp-copy-shortcode', function() {
         const shortcode = $(this).data('shortcode');
         const temp = $('<textarea>');
         $('body').append(temp);
@@ -460,7 +460,7 @@ jQuery(document).ready(function($) {
     });
     
     // Send email button (Results page)
-    $(document).on('click', '.qtest-send-email', function() {
+    $(document).on('click', '.quicktestwp-send-email', function() {
         const button = $(this);
         const resultId = button.data('result-id');
         const email = button.data('email');
@@ -472,8 +472,8 @@ jQuery(document).ready(function($) {
             url: ajaxurl,
             type: 'POST',
             data: {
-                action: 'qtest_resend_email',
-                nonce: $('#qtest_nonce').val(),
+                action: 'quicktestwp_resend_email',
+                nonce: $('#quicktestwp_nonce').val(),
                 result_id: resultId
             },
             success: function(response) {
@@ -494,7 +494,7 @@ jQuery(document).ready(function($) {
     });
     
     // Delete result button (Results page)
-    $(document).on('click', '.qtest-delete-result', function() {
+    $(document).on('click', '.quicktestwp-delete-result', function() {
         const button = $(this);
         const resultId = button.data('result-id');
         const row = button.closest('tr');
@@ -511,8 +511,8 @@ jQuery(document).ready(function($) {
                 url: ajaxurl,
                 type: 'POST',
                 data: {
-                    action: 'qtest_delete_result',
-                    nonce: $('#qtest_nonce').val(),
+                    action: 'quicktestwp_delete_result',
+                    nonce: $('#quicktestwp_nonce').val(),
                     result_id: resultId
                 },
                 success: function(response) {
@@ -536,7 +536,7 @@ jQuery(document).ready(function($) {
     });
     
     // Import questions form
-    $('#qtest-import-form').on('submit', function(e) {
+    $('#quicktestwp-import-form').on('submit', function(e) {
         e.preventDefault();
         
         const testId = $('#import_test_id').val();
@@ -553,8 +553,8 @@ jQuery(document).ready(function($) {
         }
         
         const formData = new FormData();
-        formData.append('action', 'qtest_import_questions');
-        formData.append('nonce', $('#qtest_nonce').val());
+        formData.append('action', 'quicktestwp_import_questions');
+        formData.append('nonce', $('#quicktestwp_nonce').val());
         formData.append('test_id', testId);
         formData.append('csv_file', fileInput.files[0]);
         
@@ -574,7 +574,7 @@ jQuery(document).ready(function($) {
                     QTestPopup.success(response.data.message, function() {
                         if (response.data.imported > 0) {
                             // Redirect to test edit page
-                            window.location.href = 'admin.php?page=qtest-new&test_id=' + testId;
+                            window.location.href = 'admin.php?page=quicktestwp-new&test_id=' + testId;
                         }
                     });
                 } else {
@@ -591,12 +591,12 @@ jQuery(document).ready(function($) {
     });
     
     // Sequence form
-    $('#qtest-sequence-form').on('submit', function(e) {
+    $('#quicktestwp-sequence-form').on('submit', function(e) {
         e.preventDefault();
         
         const formData = {
-            action: 'qtest_save_sequence',
-            nonce: $('#qtest_nonce').val(),
+            action: 'quicktestwp_save_sequence',
+            nonce: $('#quicktestwp_nonce').val(),
             sequence_id: $('#sequence_id').val(),
             title: $('#sequence_title').val(),
             description: $('#sequence_description').val()
@@ -610,7 +610,7 @@ jQuery(document).ready(function($) {
                 if (response.success) {
                     QTestPopup.success('Sequence saved successfully!', function() {
                         if (formData.sequence_id == 0) {
-                            window.location.href = 'admin.php?page=qtest-sequences&sequence_id=' + response.data.sequence_id;
+                            window.location.href = 'admin.php?page=quicktestwp-sequences&sequence_id=' + response.data.sequence_id;
                         } else {
                             location.reload();
                         }
@@ -626,7 +626,7 @@ jQuery(document).ready(function($) {
     });
     
     // Add test to sequence
-    $('#qtest-add-sequence-test').on('click', function() {
+    $('#quicktestwp-add-sequence-test').on('click', function() {
         const testId = $('#add_test_id').val();
         const testOrder = $('#add_test_order').val();
         const autoContinue = $('#add_auto_continue').is(':checked') ? 1 : 0;
@@ -646,8 +646,8 @@ jQuery(document).ready(function($) {
             url: ajaxurl,
             type: 'POST',
             data: {
-                action: 'qtest_add_sequence_test',
-                nonce: $('#qtest_nonce').val(),
+                action: 'quicktestwp_add_sequence_test',
+                nonce: $('#quicktestwp_nonce').val(),
                 sequence_id: sequenceId,
                 test_id: testId,
                 test_order: testOrder,
@@ -669,9 +669,9 @@ jQuery(document).ready(function($) {
     });
     
     // Remove test from sequence
-    $(document).on('click', '.qtest-remove-sequence-test', function() {
+    $(document).on('click', '.quicktestwp-remove-sequence-test', function() {
         const sequenceTestId = parseInt($(this).data('sequence-test-id'), 10);
-        const item = $(this).closest('.qtest-sequence-test-item');
+        const item = $(this).closest('.quicktestwp-sequence-test-item');
         
         if (isNaN(sequenceTestId) || sequenceTestId <= 0) {
             QTestPopup.error('Invalid sequence test ID');
@@ -687,8 +687,8 @@ jQuery(document).ready(function($) {
                 url: ajaxurl,
                 type: 'POST',
                 data: {
-                    action: 'qtest_remove_sequence_test',
-                    nonce: $('#qtest_nonce').val(),
+                    action: 'quicktestwp_remove_sequence_test',
+                    nonce: $('#quicktestwp_nonce').val(),
                     sequence_test_id: sequenceTestId
                 },
                 success: function(response) {
@@ -714,7 +714,7 @@ jQuery(document).ready(function($) {
     });
     
     // Delete sequence
-    $(document).on('click', '.qtest-delete-sequence', function() {
+    $(document).on('click', '.quicktestwp-delete-sequence', function() {
         const sequenceId = $(this).data('sequence-id');
         
         QTestPopup.confirm('Are you sure you want to delete this sequence? All tests in the sequence will be removed. This action cannot be undone.', function(confirmed) {
@@ -726,8 +726,8 @@ jQuery(document).ready(function($) {
                 url: ajaxurl,
                 type: 'POST',
                 data: {
-                    action: 'qtest_delete_sequence',
-                    nonce: $('#qtest_nonce').val(),
+                    action: 'quicktestwp_delete_sequence',
+                    nonce: $('#quicktestwp_nonce').val(),
                     sequence_id: sequenceId
                 },
                 success: function(response) {

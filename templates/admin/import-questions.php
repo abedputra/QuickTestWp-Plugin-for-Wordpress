@@ -20,8 +20,8 @@ if (!defined('ABSPATH')) {
     
     <div class="qtest-import-section" style="background: #fff; border: 1px solid #ccd0d4; border-radius: 4px; padding: 20px; margin-bottom: 20px;">
         <h2>Import Questions</h2>
-        <form id="qtest-import-form" enctype="multipart/form-data">
-            <input type="hidden" id="qtest_nonce" value="<?php echo esc_attr(wp_create_nonce('qtest_nonce')); ?>">
+        <form id="quicktestwp-import-form" enctype="multipart/form-data">
+            <input type="hidden" id="quicktestwp_nonce" value="<?php echo esc_attr(wp_create_nonce('quicktestwp_nonce')); ?>">
             
             <table class="form-table">
                 <tr>

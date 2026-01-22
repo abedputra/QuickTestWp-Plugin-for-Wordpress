@@ -2,15 +2,15 @@ jQuery(document).ready(function($) {
     'use strict';
     
     // Insert shortcode button in meta box
-    $('#qtest-insert-shortcode').on('click', function() {
-        const testId = $('#qtest-select-test').val();
+    $('#quicktestwp-insert-shortcode').on('click', function() {
+        const testId = $('#quicktestwp-select-test').val();
         
         if (!testId) {
             alert('Please select a test first.');
             return;
         }
         
-        const shortcode = '[qtest id="' + testId + '"]';
+        const shortcode = '[quicktestwp id="' + testId + '"]';
         
         // Try to insert into editor
         if (typeof wp !== 'undefined' && wp.data && wp.data.select('core/editor')) {
@@ -50,20 +50,20 @@ jQuery(document).ready(function($) {
     
     // Add quicktag button if QTags is available
     if (typeof QTags !== 'undefined') {
-        QTags.addButton('qtest_select', 'QTest', function() {
-            if (typeof qtestEditor !== 'undefined' && qtestEditor.tests && qtestEditor.tests.length > 0) {
+        QTags.addButton('quicktestwp_select', 'QTest', function() {
+            if (typeof quicktestwpEditor !== 'undefined' && quicktestwpEditor.tests && quicktestwpEditor.tests.length > 0) {
                 let options = 'Select Test:\n';
-                qtestEditor.tests.forEach(function(test) {
+                quicktestwpEditor.tests.forEach(function(test) {
                     options += test.id + ' - ' + test.title + '\n';
                 });
                 const testId = prompt(options + '\nEnter Test ID:');
                 if (testId !== null && testId !== '') {
-                    QTags.insertContent('[qtest id="' + testId + '"]');
+                    QTags.insertContent('[quicktestwp id="' + testId + '"]');
                 }
             } else {
                 const testId = prompt('Enter Test ID:');
                 if (testId !== null && testId !== '') {
-                    QTags.insertContent('[qtest id="' + testId + '"]');
+                    QTags.insertContent('[quicktestwp id="' + testId + '"]');
                 }
             }
         });

@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
         <p>Enter your email address and test ID to view your results:</p>
         
         <form id="qtest-lookup-form">
-            <input type="hidden" id="qtest_nonce" value="<?php echo esc_attr(wp_create_nonce('qtest_nonce')); ?>">
+            <input type="hidden" id="quicktestwp_nonce" value="<?php echo esc_attr(wp_create_nonce('quicktestwp_nonce')); ?>">
             
             <div class="qtest-form-group">
                 <label for="lookup_email">Email</label>

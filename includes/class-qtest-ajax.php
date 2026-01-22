@@ -1,55 +1,55 @@
 <?php
 /**
- * AJAX handlers for QTest
+ * AJAX handlers for QuickTestWP
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-class QTest_Ajax {
+class QuickTestWP_Ajax {
     
     public function __construct() {
         // Admin AJAX
-        add_action('wp_ajax_qtest_save_test', array($this, 'save_test'));
-        add_action('wp_ajax_qtest_save_question', array($this, 'save_question'));
-        add_action('wp_ajax_qtest_delete_test', array($this, 'delete_test'));
-        add_action('wp_ajax_qtest_delete_question', array($this, 'delete_question'));
+        add_action('wp_ajax_quicktestwp_save_test', array($this, 'save_test'));
+        add_action('wp_ajax_quicktestwp_save_question', array($this, 'save_question'));
+        add_action('wp_ajax_quicktestwp_delete_test', array($this, 'delete_test'));
+        add_action('wp_ajax_quicktestwp_delete_question', array($this, 'delete_question'));
         
         // Frontend AJAX
-        add_action('wp_ajax_qtest_submit_result', array($this, 'submit_result'));
-        add_action('wp_ajax_nopriv_qtest_submit_result', array($this, 'submit_result'));
-        add_action('wp_ajax_qtest_get_result', array($this, 'get_result'));
-        add_action('wp_ajax_nopriv_qtest_get_result', array($this, 'get_result'));
-        add_action('wp_ajax_qtest_get_average_times', array($this, 'get_average_times'));
-        add_action('wp_ajax_nopriv_qtest_get_average_times', array($this, 'get_average_times'));
+        add_action('wp_ajax_quicktestwp_submit_result', array($this, 'submit_result'));
+        add_action('wp_ajax_nopriv_quicktestwp_submit_result', array($this, 'submit_result'));
+        add_action('wp_ajax_quicktestwp_get_result', array($this, 'get_result'));
+        add_action('wp_ajax_nopriv_quicktestwp_get_result', array($this, 'get_result'));
+        add_action('wp_ajax_quicktestwp_get_average_times', array($this, 'get_average_times'));
+        add_action('wp_ajax_nopriv_quicktestwp_get_average_times', array($this, 'get_average_times'));
         
         // Admin AJAX - Resend email
-        add_action('wp_ajax_qtest_resend_email', array($this, 'resend_email'));
-        add_action('wp_ajax_qtest_delete_result', array($this, 'delete_result'));
+        add_action('wp_ajax_quicktestwp_resend_email', array($this, 'resend_email'));
+        add_action('wp_ajax_quicktestwp_delete_result', array($this, 'delete_result'));
         
         // Admin AJAX - Import questions
-        add_action('wp_ajax_qtest_import_questions', array($this, 'import_questions'));
+        add_action('wp_ajax_quicktestwp_import_questions', array($this, 'import_questions'));
         
         // Admin AJAX - Sequences
-        add_action('wp_ajax_qtest_save_sequence', array($this, 'save_sequence'));
-        add_action('wp_ajax_qtest_delete_sequence', array($this, 'delete_sequence'));
-        add_action('wp_ajax_qtest_add_sequence_test', array($this, 'add_sequence_test'));
-        add_action('wp_ajax_qtest_remove_sequence_test', array($this, 'remove_sequence_test'));
+        add_action('wp_ajax_quicktestwp_save_sequence', array($this, 'save_sequence'));
+        add_action('wp_ajax_quicktestwp_delete_sequence', array($this, 'delete_sequence'));
+        add_action('wp_ajax_quicktestwp_add_sequence_test', array($this, 'add_sequence_test'));
+        add_action('wp_ajax_quicktestwp_remove_sequence_test', array($this, 'remove_sequence_test'));
     }
     
     /**
      * Save test
      */
     public function save_test() {
-        check_ajax_referer('qtest_nonce', 'nonce');
+        check_ajax_referer('quicktestwp_nonce', 'nonce');
         
         if (!current_user_can('manage_options')) {
             wp_send_json_error(array('message' => 'Unauthorized'));
         }
         
         global $wpdb;
-        $table = $wpdb->prefix . 'qtest_tests';
+        $table = $wpdb->prefix . 'quicktestwp_tests';
         
         $test_id = isset($_POST['test_id']) ? intval($_POST['test_id']) : 0;
         $title = isset($_POST['title']) ? sanitize_text_field(wp_unslash($_POST['title'])) : '';
@@ -106,14 +106,14 @@ class QTest_Ajax {
      * Save question
      */
     public function save_question() {
-        check_ajax_referer('qtest_nonce', 'nonce');
+        check_ajax_referer('quicktestwp_nonce', 'nonce');
         
         if (!current_user_can('manage_options')) {
             wp_send_json_error(array('message' => 'Unauthorized'));
         }
         
         global $wpdb;
-        $table = $wpdb->prefix . 'qtest_questions';
+        $table = $wpdb->prefix . 'quicktestwp_questions';
         
         $question_id = isset($_POST['question_id']) ? intval($_POST['question_id']) : 0;
         $test_id = isset($_POST['test_id']) ? intval($_POST['test_id']) : 0;
@@ -191,7 +191,7 @@ class QTest_Ajax {
      * Delete test
      */
     public function delete_test() {
-        check_ajax_referer('qtest_nonce', 'nonce');
+        check_ajax_referer('quicktestwp_nonce', 'nonce');
         
         if (!current_user_can('manage_options')) {
             wp_send_json_error(array('message' => 'Unauthorized'));
@@ -201,11 +201,11 @@ class QTest_Ajax {
         $test_id = isset($_POST['test_id']) ? intval($_POST['test_id']) : 0;
         
         // Delete questions first
-        $questions_table = $wpdb->prefix . 'qtest_questions';
+        $questions_table = $wpdb->prefix . 'quicktestwp_questions';
         $wpdb->delete($questions_table, array('test_id' => $test_id), array('%d'));
         
         // Delete test
-        $tests_table = $wpdb->prefix . 'qtest_tests';
+        $tests_table = $wpdb->prefix . 'quicktestwp_tests';
         $result = $wpdb->delete($tests_table, array('id' => $test_id), array('%d'));
         
         if ($result) {
@@ -219,7 +219,7 @@ class QTest_Ajax {
      * Delete question
      */
     public function delete_question() {
-        check_ajax_referer('qtest_nonce', 'nonce');
+        check_ajax_referer('quicktestwp_nonce', 'nonce');
         
         if (!current_user_can('manage_options')) {
             wp_send_json_error(array('message' => 'Unauthorized'));
@@ -233,7 +233,7 @@ class QTest_Ajax {
             wp_send_json_error(array('message' => 'Invalid question ID'));
         }
         
-        $table = $wpdb->prefix . 'qtest_questions';
+        $table = $wpdb->prefix . 'quicktestwp_questions';
         
         // Check if question exists before attempting to delete
         $question = $wpdb->get_row($wpdb->prepare(
@@ -283,7 +283,7 @@ class QTest_Ajax {
      * Submit test result
      */
     public function submit_result() {
-        check_ajax_referer('qtest_nonce', 'nonce');
+        check_ajax_referer('quicktestwp_nonce', 'nonce');
         
         $test_id = isset($_POST['test_id']) ? intval($_POST['test_id']) : 0;
         $first_name = isset($_POST['first_name']) ? sanitize_text_field(wp_unslash($_POST['first_name'])) : '';
@@ -319,7 +319,7 @@ class QTest_Ajax {
         }
         
         // Calculate score
-        $questions = QTest_Database::get_questions($test_id);
+        $questions = QuickTestWP_Database::get_questions($test_id);
         $score = 0;
         $total = count($questions);
         
@@ -376,7 +376,7 @@ class QTest_Ajax {
             $result_data['question_times'] = $question_times;
         }
         
-        $saved = QTest_Database::save_result($result_data);
+        $saved = QuickTestWP_Database::save_result($result_data);
         
         if ($saved) {
             // Only send email for non-sequence mode or final sequence test (when real email is provided)
@@ -404,7 +404,7 @@ class QTest_Ajax {
      * Get result
      */
     public function get_result() {
-        check_ajax_referer('qtest_nonce', 'nonce');
+        check_ajax_referer('quicktestwp_nonce', 'nonce');
         
         $email = isset($_POST['email']) ? sanitize_email(wp_unslash($_POST['email'])) : '';
         $test_id = isset($_POST['test_id']) ? intval($_POST['test_id']) : 0;
@@ -413,11 +413,11 @@ class QTest_Ajax {
             wp_send_json_error(array('message' => 'Please provide a valid email'));
         }
         
-        $result = QTest_Database::get_result($email, $test_id);
+        $result = QuickTestWP_Database::get_result($email, $test_id);
         
         if ($result) {
             $answers = json_decode($result->answers, true);
-            $questions = QTest_Database::get_questions($test_id);
+            $questions = QuickTestWP_Database::get_questions($test_id);
             
             wp_send_json_success(array(
                 'result' => $result,
@@ -433,10 +433,10 @@ class QTest_Ajax {
      * Get average times per question
      */
     public function get_average_times() {
-        check_ajax_referer('qtest_nonce', 'nonce');
+        check_ajax_referer('quicktestwp_nonce', 'nonce');
         
         $test_id = isset($_POST['test_id']) ? intval($_POST['test_id']) : 0;
-        $averages = QTest_Database::get_average_times_per_question($test_id);
+        $averages = QuickTestWP_Database::get_average_times_per_question($test_id);
         
         wp_send_json_success(array('averages' => $averages));
     }
@@ -445,20 +445,20 @@ class QTest_Ajax {
      * Resend result email (Admin)
      */
     public function resend_email() {
-        check_ajax_referer('qtest_nonce', 'nonce');
+        check_ajax_referer('quicktestwp_nonce', 'nonce');
         
         if (!current_user_can('manage_options')) {
             wp_send_json_error(array('message' => 'Unauthorized'));
         }
         
         $result_id = isset($_POST['result_id']) ? intval($_POST['result_id']) : 0;
-        $result = QTest_Database::get_result_by_id($result_id);
+        $result = QuickTestWP_Database::get_result_by_id($result_id);
         
         if (!$result) {
             wp_send_json_error(array('message' => 'Result not found'));
         }
         
-        $questions = QTest_Database::get_questions($result->test_id);
+        $questions = QuickTestWP_Database::get_questions($result->test_id);
         $answers = json_decode($result->answers, true);
         
         $result_data = array(
@@ -483,7 +483,7 @@ class QTest_Ajax {
      * Delete result (Admin)
      */
     public function delete_result() {
-        check_ajax_referer('qtest_nonce', 'nonce');
+        check_ajax_referer('quicktestwp_nonce', 'nonce');
         
         if (!current_user_can('manage_options')) {
             wp_send_json_error(array('message' => 'Unauthorized'));
@@ -491,7 +491,7 @@ class QTest_Ajax {
         
         global $wpdb;
         $result_id = isset($_POST['result_id']) ? intval($_POST['result_id']) : 0;
-        $table = $wpdb->prefix . 'qtest_results';
+        $table = $wpdb->prefix . 'quicktestwp_results';
         
         $result = $wpdb->delete($table, array('id' => $result_id), array('%d'));
         
@@ -507,7 +507,7 @@ class QTest_Ajax {
      */
     private function send_result_email($result_data, $questions) {
         $to = $result_data['email'];
-        $subject = 'Your QTest Results';
+        $subject = 'Your QuickTestWP Results';
         
         $percentage = round(($result_data['score'] / $result_data['total_questions']) * 100, 2);
         
@@ -567,7 +567,7 @@ class QTest_Ajax {
      * Import questions from CSV
      */
     public function import_questions() {
-        check_ajax_referer('qtest_nonce', 'nonce');
+        check_ajax_referer('quicktestwp_nonce', 'nonce');
         
         if (!current_user_can('manage_options')) {
             wp_send_json_error(array('message' => 'Unauthorized'));
@@ -580,7 +580,7 @@ class QTest_Ajax {
         }
         
         // Check if test exists
-        $test = QTest_Database::get_test($test_id);
+        $test = QuickTestWP_Database::get_test($test_id);
         if (!$test) {
             wp_send_json_error(array('message' => 'Test not found'));
         }
@@ -643,7 +643,7 @@ class QTest_Ajax {
         }
         
         global $wpdb;
-        $table = $wpdb->prefix . 'qtest_questions';
+        $table = $wpdb->prefix . 'quicktestwp_questions';
         $imported = 0;
         $errors = array();
         $row_num = 1;
@@ -769,14 +769,14 @@ class QTest_Ajax {
      * Save sequence
      */
     public function save_sequence() {
-        check_ajax_referer('qtest_nonce', 'nonce');
+        check_ajax_referer('quicktestwp_nonce', 'nonce');
         
         if (!current_user_can('manage_options')) {
             wp_send_json_error(array('message' => 'Unauthorized'));
         }
         
         global $wpdb;
-        $table = $wpdb->prefix . 'qtest_sequences';
+        $table = $wpdb->prefix . 'quicktestwp_sequences';
         
         $sequence_id = isset($_POST['sequence_id']) ? intval($_POST['sequence_id']) : 0;
         $title = isset($_POST['title']) ? sanitize_text_field(wp_unslash($_POST['title'])) : '';
@@ -818,7 +818,7 @@ class QTest_Ajax {
      * Delete sequence
      */
     public function delete_sequence() {
-        check_ajax_referer('qtest_nonce', 'nonce');
+        check_ajax_referer('quicktestwp_nonce', 'nonce');
         
         if (!current_user_can('manage_options')) {
             wp_send_json_error(array('message' => 'Unauthorized'));
@@ -828,11 +828,11 @@ class QTest_Ajax {
         $sequence_id = isset($_POST['sequence_id']) ? intval($_POST['sequence_id']) : 0;
         
         // Delete sequence tests first
-        $sequence_tests_table = $wpdb->prefix . 'qtest_sequence_tests';
+        $sequence_tests_table = $wpdb->prefix . 'quicktestwp_sequence_tests';
         $wpdb->delete($sequence_tests_table, array('sequence_id' => $sequence_id), array('%d'));
         
         // Delete sequence
-        $sequences_table = $wpdb->prefix . 'qtest_sequences';
+        $sequences_table = $wpdb->prefix . 'quicktestwp_sequences';
         $result = $wpdb->delete($sequences_table, array('id' => $sequence_id), array('%d'));
         
         if ($result) {
@@ -846,14 +846,14 @@ class QTest_Ajax {
      * Add test to sequence
      */
     public function add_sequence_test() {
-        check_ajax_referer('qtest_nonce', 'nonce');
+        check_ajax_referer('quicktestwp_nonce', 'nonce');
         
         if (!current_user_can('manage_options')) {
             wp_send_json_error(array('message' => 'Unauthorized'));
         }
         
         global $wpdb;
-        $table = $wpdb->prefix . 'qtest_sequence_tests';
+        $table = $wpdb->prefix . 'quicktestwp_sequence_tests';
         
         $sequence_id = isset($_POST['sequence_id']) ? intval($_POST['sequence_id']) : 0;
         $test_id = isset($_POST['test_id']) ? intval($_POST['test_id']) : 0;
@@ -897,7 +897,7 @@ class QTest_Ajax {
      * Remove test from sequence
      */
     public function remove_sequence_test() {
-        check_ajax_referer('qtest_nonce', 'nonce');
+        check_ajax_referer('quicktestwp_nonce', 'nonce');
         
         if (!current_user_can('manage_options')) {
             wp_send_json_error(array('message' => 'Unauthorized'));
@@ -958,4 +958,4 @@ class QTest_Ajax {
     }
 }
 
-// AJAX handlers will be initialized by QTest_Frontend and QTest_Admin
+// AJAX handlers will be initialized by QuickTestWP_Frontend and QuickTestWP_Admin

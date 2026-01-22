@@ -1,14 +1,14 @@
 <?php
 
 /**
- * Admin interface for QTest
+ * Admin interface for QuickTestWP
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-class QTest_Admin
+class QuickTestWP_Admin
 {
 
     public function __construct()
@@ -16,7 +16,7 @@ class QTest_Admin
         add_action('admin_menu', array($this, 'add_admin_menu'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
 
-        // Add QTest button to post editor
+        // Add QuickTestWP button to post editor
         add_action('admin_init', array($this, 'add_editor_buttons'));
         add_action('add_meta_boxes', array($this, 'add_test_meta_box'));
     }
@@ -27,66 +27,66 @@ class QTest_Admin
     public function add_admin_menu()
     {
         add_menu_page(
-            'QTest',
-            'QTest',
+            'QuickTestWP',
+            'QuickTestWP',
             'manage_options',
-            'qtest',
+            'quicktestwp',
             array($this, 'render_tests_page'),
             'dashicons-clipboard',
             30
         );
 
         add_submenu_page(
-            'qtest',
+            'quicktestwp',
             'Tests',
             'All Tests',
             'manage_options',
-            'qtest',
+            'quicktestwp',
             array($this, 'render_tests_page')
         );
 
         add_submenu_page(
-            'qtest',
+            'quicktestwp',
             'Add New Test',
             'Add New',
             'manage_options',
-            'qtest-new',
+            'quicktestwp-new',
             array($this, 'render_new_test_page')
         );
 
         add_submenu_page(
-            'qtest',
+            'quicktestwp',
             'Test Sequences',
             'All Sequences',
             'manage_options',
-            'qtest-sequences',
+            'quicktestwp-sequences',
             array($this, 'render_sequences_page')
         );
 
         add_submenu_page(
-            'qtest',
+            'quicktestwp',
             'Add New Sequence',
             'Add New Sequence',
             'manage_options',
-            'qtest-sequence-new',
+            'quicktestwp-sequence-new',
             array($this, 'render_new_sequence_page')
         );
 
         add_submenu_page(
-            'qtest',
+            'quicktestwp',
             'Test Results',
             'Results',
             'manage_options',
-            'qtest-results',
+            'quicktestwp-results',
             array($this, 'render_results_page')
         );
 
         add_submenu_page(
-            'qtest',
+            'quicktestwp',
             'Import Questions',
             'Import Questions',
             'manage_options',
-            'qtest-import',
+            'quicktestwp-import',
             array($this, 'render_import_page')
         );
     }
@@ -96,20 +96,20 @@ class QTest_Admin
      */
     public function enqueue_admin_scripts($hook)
     {
-        // Enqueue for QTest pages
-        if (strpos($hook, 'qtest') !== false) {
+        // Enqueue for QuickTestWP pages
+        if (strpos($hook, 'quicktestwp') !== false) {
             wp_enqueue_media();
             wp_enqueue_script('jquery');
-            wp_enqueue_style('qtest-popup', QTEST_PLUGIN_URL . 'assets/css/popup.css', array(), QTEST_VERSION);
-            wp_enqueue_script('qtest-popup', QTEST_PLUGIN_URL . 'assets/js/qtest-popup.js', array('jquery'), QTEST_VERSION, true);
-            wp_enqueue_style('qtest-admin', QTEST_PLUGIN_URL . 'assets/css/admin.css', array(), QTEST_VERSION);
-            wp_enqueue_script('qtest-admin', QTEST_PLUGIN_URL . 'assets/js/admin.js', array('jquery', 'qtest-popup'), QTEST_VERSION, true);
+            wp_enqueue_style('quicktestwp-popup', QUICKTESTWP_PLUGIN_URL . 'assets/css/popup.css', array(), QUICKTESTWP_VERSION);
+            wp_enqueue_script('quicktestwp-popup', QUICKTESTWP_PLUGIN_URL . 'assets/js/qtest-popup.js', array('jquery'), QUICKTESTWP_VERSION, true);
+            wp_enqueue_style('quicktestwp-admin', QUICKTESTWP_PLUGIN_URL . 'assets/css/admin.css', array(), QUICKTESTWP_VERSION);
+            wp_enqueue_script('quicktestwp-admin', QUICKTESTWP_PLUGIN_URL . 'assets/js/admin.js', array('jquery', 'quicktestwp-popup'), QUICKTESTWP_VERSION, true);
         }
 
         // Enqueue for post editor
         if (in_array($hook, array('post.php', 'post-new.php'))) {
-            wp_enqueue_script('qtest-editor', QTEST_PLUGIN_URL . 'assets/js/editor.js', array('jquery', 'quicktags'), QTEST_VERSION, true);
-            wp_localize_script('qtest-editor', 'qtestEditor', array(
+            wp_enqueue_script('quicktestwp-editor', QUICKTESTWP_PLUGIN_URL . 'assets/js/editor.js', array('jquery', 'quicktags'), QUICKTESTWP_VERSION, true);
+            wp_localize_script('quicktestwp-editor', 'quicktestwpEditor', array(
                 'tests' => $this->get_tests_for_editor()
             ));
         }
@@ -125,7 +125,7 @@ class QTest_Admin
      */
     private function get_tests_for_editor()
     {
-        $tests = QTest_Database::get_tests();
+        $tests = QuickTestWP_Database::get_tests();
         $tests_array = array();
         foreach ($tests as $test) {
             $tests_array[] = array(
@@ -161,7 +161,7 @@ class QTest_Admin
             jQuery(document).ready(function($) {
                 if (typeof QTags !== 'undefined') {
                     var tests = <?php echo json_encode($tests); ?>;
-                    QTags.addButton('qtest', 'QTest', function() {
+                    QTags.addButton('quicktestwp', 'QuickTestWP', function() {
                         if (tests && tests.length > 0) {
                             var options = 'Select Test:\n\n';
                             tests.forEach(function(test) {
@@ -173,7 +173,7 @@ class QTest_Admin
                             var testId = prompt('Enter Test ID:');
                         }
                         if (testId !== null && testId !== '') {
-                            QTags.insertContent('[qtest id="' + testId + '"]');
+                            QTags.insertContent('[quicktestwp id="' + testId + '"]');
                         }
                     });
                 }
@@ -190,8 +190,8 @@ class QTest_Admin
         $post_types = get_post_types(array('public' => true));
         foreach ($post_types as $post_type) {
             add_meta_box(
-                'qtest_insert',
-                'Insert QTest',
+                'quicktestwp_insert',
+                'Insert QuickTestWP',
                 array($this, 'render_test_meta_box'),
                 $post_type,
                 'side',
@@ -205,11 +205,11 @@ class QTest_Admin
      */
     public function render_test_meta_box($post)
     {
-        $tests = QTest_Database::get_tests();
+        $tests = QuickTestWP_Database::get_tests();
     ?>
-        <div class="qtest-insert-box">
+        <div class="quicktestwp-insert-box">
             <p>Select a test to insert into your post:</p>
-            <select id="qtest-select-test" class="widefat">
+            <select id="quicktestwp-select-test" class="widefat">
                 <option value="">-- Select Test --</option>
                 <?php foreach ($tests as $test): ?>
                     <option value="<?php echo esc_attr($test->id); ?>"><?php echo esc_html($test->title); ?> (ID: <?php echo esc_html($test->id); ?>)</option>
@@ -217,11 +217,11 @@ class QTest_Admin
             </select>
             <p class="description">This will insert a shortcode into your post.</p>
             <p>
-                <button type="button" id="qtest-insert-shortcode" class="button button-primary">Insert Test</button>
+                <button type="button" id="quicktestwp-insert-shortcode" class="button button-primary">Insert Test</button>
             </p>
             <p class="description">
                 <strong>Or manually use:</strong><br>
-                <code>[qtest id="1"]</code><br>
+                <code>[quicktestwp id="1"]</code><br>
                 Replace "1" with your test ID.
             </p>
         </div>
@@ -234,9 +234,9 @@ class QTest_Admin
     public function render_tests_page()
     {
         global $wpdb;
-        $tests = QTest_Database::get_tests();
+        $tests = QuickTestWP_Database::get_tests();
 
-        include QTEST_PLUGIN_DIR . 'templates/admin/tests-list.php';
+        include QUICKTESTWP_PLUGIN_DIR . 'templates/admin/tests-list.php';
     }
 
     /**
@@ -245,10 +245,10 @@ class QTest_Admin
     public function render_new_test_page()
     {
         $test_id = isset($_GET['test_id']) ? intval($_GET['test_id']) : 0;
-        $test = $test_id ? QTest_Database::get_test($test_id) : null;
-        $questions = $test_id ? QTest_Database::get_questions($test_id) : array();
+        $test = $test_id ? QuickTestWP_Database::get_test($test_id) : null;
+        $questions = $test_id ? QuickTestWP_Database::get_questions($test_id) : array();
 
-        include QTEST_PLUGIN_DIR . 'templates/admin/test-edit.php';
+        include QUICKTESTWP_PLUGIN_DIR . 'templates/admin/test-edit.php';
     }
 
     /**
@@ -257,10 +257,10 @@ class QTest_Admin
     public function render_results_page()
     {
         $test_id = isset($_GET['test_id']) ? intval($_GET['test_id']) : null;
-        $results = QTest_Database::get_all_results($test_id);
-        $tests = QTest_Database::get_tests();
+        $results = QuickTestWP_Database::get_all_results($test_id);
+        $tests = QuickTestWP_Database::get_tests();
 
-        include QTEST_PLUGIN_DIR . 'templates/admin/results-list.php';
+        include QUICKTESTWP_PLUGIN_DIR . 'templates/admin/results-list.php';
     }
 
     /**
@@ -268,8 +268,8 @@ class QTest_Admin
      */
     public function render_import_page()
     {
-        $tests = QTest_Database::get_tests();
-        include QTEST_PLUGIN_DIR . 'templates/admin/import-questions.php';
+        $tests = QuickTestWP_Database::get_tests();
+        include QUICKTESTWP_PLUGIN_DIR . 'templates/admin/import-questions.php';
     }
 
     /**
@@ -278,16 +278,16 @@ class QTest_Admin
     public function render_sequences_page()
     {
         $sequence_id = isset($_GET['sequence_id']) ? intval($_GET['sequence_id']) : 0;
-        $sequences = QTest_Database::get_sequences();
-        $sequence = $sequence_id ? QTest_Database::get_sequence($sequence_id) : null;
-        $sequence_tests = $sequence_id ? QTest_Database::get_sequence_tests($sequence_id) : array();
-        $tests = QTest_Database::get_tests();
+        $sequences = QuickTestWP_Database::get_sequences();
+        $sequence = $sequence_id ? QuickTestWP_Database::get_sequence($sequence_id) : null;
+        $sequence_tests = $sequence_id ? QuickTestWP_Database::get_sequence_tests($sequence_id) : array();
+        $tests = QuickTestWP_Database::get_tests();
 
         // Show edit form if editing existing sequence
         if ($sequence_id && $sequence) {
-            include QTEST_PLUGIN_DIR . 'templates/admin/sequence-edit.php';
+            include QUICKTESTWP_PLUGIN_DIR . 'templates/admin/sequence-edit.php';
         } else {
-            include QTEST_PLUGIN_DIR . 'templates/admin/sequences-list.php';
+            include QUICKTESTWP_PLUGIN_DIR . 'templates/admin/sequences-list.php';
         }
     }
 
@@ -296,9 +296,9 @@ class QTest_Admin
      */
     public function render_new_sequence_page()
     {
-        $tests = QTest_Database::get_tests();
+        $tests = QuickTestWP_Database::get_tests();
         $sequence = null; // New sequence
         $sequence_tests = array(); // No tests yet
-        include QTEST_PLUGIN_DIR . 'templates/admin/sequence-edit.php';
+        include QUICKTESTWP_PLUGIN_DIR . 'templates/admin/sequence-edit.php';
     }
 }

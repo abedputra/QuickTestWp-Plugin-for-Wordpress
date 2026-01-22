@@ -1,21 +1,21 @@
 <?php
 
 /**
- * Frontend interface for QTest
+ * Frontend interface for QuickTestWP
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-class QTest_Frontend
+class QuickTestWP_Frontend
 {
 
     public function __construct()
     {
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_shortcode('qtest', array($this, 'render_quiz_shortcode'));
-        add_shortcode('qtest_sequence', array($this, 'render_sequence_shortcode'));
+        add_shortcode('quicktestwp', array($this, 'render_quiz_shortcode'));
+        add_shortcode('quicktestwp_sequence', array($this, 'render_sequence_shortcode'));
         add_action('init', array($this, 'register_rewrite_rules'));
         add_filter('query_vars', array($this, 'add_query_vars'));
         add_action('template_redirect', array($this, 'handle_custom_pages'));
@@ -26,15 +26,15 @@ class QTest_Frontend
      */
     public function enqueue_scripts()
     {
-        wp_enqueue_style('qtest-popup', QTEST_PLUGIN_URL . 'assets/css/popup.css', array(), QTEST_VERSION);
-        wp_enqueue_script('qtest-popup', QTEST_PLUGIN_URL . 'assets/js/qtest-popup.js', array('jquery'), QTEST_VERSION, true);
-        wp_enqueue_style('qtest-frontend', QTEST_PLUGIN_URL . 'assets/css/frontend.css', array(), QTEST_VERSION);
-        wp_enqueue_script('qtest-security', QTEST_PLUGIN_URL . 'assets/js/qtest-security.js', array('jquery', 'qtest-popup'), QTEST_VERSION, true);
-        wp_enqueue_script('qtest-frontend', QTEST_PLUGIN_URL . 'assets/js/frontend.js', array('jquery', 'qtest-popup', 'qtest-security'), QTEST_VERSION, true);
+        wp_enqueue_style('quicktestwp-popup', QUICKTESTWP_PLUGIN_URL . 'assets/css/popup.css', array(), QUICKTESTWP_VERSION);
+        wp_enqueue_script('quicktestwp-popup', QUICKTESTWP_PLUGIN_URL . 'assets/js/qtest-popup.js', array('jquery'), QUICKTESTWP_VERSION, true);
+        wp_enqueue_style('quicktestwp-frontend', QUICKTESTWP_PLUGIN_URL . 'assets/css/frontend.css', array(), QUICKTESTWP_VERSION);
+        wp_enqueue_script('quicktestwp-security', QUICKTESTWP_PLUGIN_URL . 'assets/js/qtest-security.js', array('jquery', 'quicktestwp-popup'), QUICKTESTWP_VERSION, true);
+        wp_enqueue_script('quicktestwp-frontend', QUICKTESTWP_PLUGIN_URL . 'assets/js/frontend.js', array('jquery', 'quicktestwp-popup', 'quicktestwp-security'), QUICKTESTWP_VERSION, true);
 
-        wp_localize_script('qtest-frontend', 'qtestAjax', array(
+        wp_localize_script('quicktestwp-frontend', 'quicktestwpAjax', array(
             'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('qtest_nonce')
+            'nonce' => wp_create_nonce('quicktestwp_nonce')
         ));
     }
 
@@ -43,8 +43,8 @@ class QTest_Frontend
      */
     public function register_rewrite_rules()
     {
-        add_rewrite_rule('^qtest-result/?$', 'index.php?qtest_page=result', 'top');
-        add_rewrite_rule('^qtest/([0-9]+)/?$', 'index.php?qtest_page=quiz&test_id=$matches[1]', 'top');
+        add_rewrite_rule('^quicktestwp-result/?$', 'index.php?quicktestwp_page=result', 'top');
+        add_rewrite_rule('^quicktestwp/([0-9]+)/?$', 'index.php?quicktestwp_page=quiz&test_id=$matches[1]', 'top');
     }
 
     /**
@@ -52,7 +52,7 @@ class QTest_Frontend
      */
     public function add_query_vars($vars)
     {
-        $vars[] = 'qtest_page';
+        $vars[] = 'quicktestwp_page';
         $vars[] = 'test_id';
         $vars[] = 'sequence_id';
         return $vars;
@@ -63,7 +63,7 @@ class QTest_Frontend
      */
     public function handle_custom_pages()
     {
-        $page = get_query_var('qtest_page');
+        $page = get_query_var('quicktestwp_page');
 
         if ($page === 'quiz') {
             $test_id = intval(get_query_var('test_id'));
@@ -120,7 +120,7 @@ class QTest_Frontend
         // If test_id provided, verify it belongs to this sequence
         if ($test_id > 0) {
             global $wpdb;
-            $table = $wpdb->prefix . 'qtest_sequence_tests';
+            $table = $wpdb->prefix . 'quicktestwp_sequence_tests';
             $test_in_sequence = $wpdb->get_var($wpdb->prepare(
                 "SELECT COUNT(*) FROM $table WHERE sequence_id = %d AND test_id = %d",
                 $sequence_id,
@@ -129,7 +129,7 @@ class QTest_Frontend
             
             if ($test_in_sequence > 0) {
                 // Test belongs to sequence, use it
-                $current_test = QTest_Database::get_test($test_id);
+                $current_test = QuickTestWP_Database::get_test($test_id);
                 if ($current_test) {
                     ob_start();
                     $this->render_quiz($test_id, $sequence_id);
@@ -140,7 +140,7 @@ class QTest_Frontend
         }
         
         // Get first test in sequence (default or fallback)
-        $first_test = QTest_Database::get_first_test_in_sequence($sequence_id);
+        $first_test = QuickTestWP_Database::get_first_test_in_sequence($sequence_id);
         if (!$first_test) {
             return '<p>No tests found in this sequence.</p>';
         }
@@ -161,7 +161,7 @@ class QTest_Frontend
             $sequence_id = isset($_GET['sequence_id']) ? intval($_GET['sequence_id']) : null;
         }
 
-        $test = QTest_Database::get_test($test_id);
+        $test = QuickTestWP_Database::get_test($test_id);
         if (!$test) {
             wp_die('Test not found');
         }
@@ -174,7 +174,7 @@ class QTest_Frontend
      */
     private function render_quiz($test_id, $sequence_id = null)
     {
-        $test = QTest_Database::get_test($test_id);
+        $test = QuickTestWP_Database::get_test($test_id);
 
         if (!$test) {
             echo '<p>Test not found.</p>';
@@ -207,7 +207,7 @@ class QTest_Frontend
             }
         }
 
-        $questions = QTest_Database::get_questions($test_id);
+        $questions = QuickTestWP_Database::get_questions($test_id);
 
         if (empty($questions)) {
             echo '<p>No questions found for this test.</p>';
@@ -217,8 +217,8 @@ class QTest_Frontend
         // Pass sequence info to template
         $sequence_info = null;
         if ($sequence_id) {
-            $sequence = QTest_Database::get_sequence($sequence_id);
-            $next_test = QTest_Database::get_next_test_in_sequence($sequence_id, $test_id);
+            $sequence = QuickTestWP_Database::get_sequence($sequence_id);
+            $next_test = QuickTestWP_Database::get_next_test_in_sequence($sequence_id, $test_id);
             
             // Only set next_test if it exists and is different from current test
             $next_test_data = null;
@@ -236,7 +236,7 @@ class QTest_Frontend
             );
         }
 
-        include QTEST_PLUGIN_DIR . 'templates/frontend/quiz.php';
+        include QUICKTESTWP_PLUGIN_DIR . 'templates/frontend/quiz.php';
     }
 
     /**
@@ -244,6 +244,6 @@ class QTest_Frontend
      */
     private function render_result_page()
     {
-        include QTEST_PLUGIN_DIR . 'templates/frontend/result.php';
+        include QUICKTESTWP_PLUGIN_DIR . 'templates/frontend/result.php';
     }
 }
